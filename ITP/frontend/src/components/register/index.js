@@ -80,11 +80,13 @@ function RegisterForm() {
       <div className="absolute inset-0 bg-black/50 z-10 backdrop-blur-sm" />
 
       {/* Top-left floating logo */}
+      <a href="/">
       <img
         src={logoImage}
         alt="Logo"
-        className="absolute top-10 left-10 w-24 h-24 rounded-full shadow-xl border-4 border-white/40 z-20 bg-white/70 backdrop-blur-sm p-1"
+        className="absolute top-12 left-20 w-24 h-24 rounded-full shadow-xl border-4 border-white/40 z-20 bg-white/70 backdrop-blur-sm p-1"
       />
+      </a>
 
       <AnimatePresence>
         <motion.div
