@@ -29,7 +29,7 @@ function Machinedashboard() {
         const response = await axios.get("http://localhost:3000/api/machines/getallmachines");
         const machines = response.data;
 
-        // Filter machines based on remaining repair days
+        
         const filteredMachines = machines.filter((machine) => {
           const { remainingDays } = calculateNextRepairDate(
             machine.lastRepairDate,
