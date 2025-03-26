@@ -44,7 +44,7 @@ function Adminnavbar() {
         </Link>
         <Link
 
-to="/e_atendance"
+to="/e_requestedleave"
 className={`flex items-center w-full mt-3 py-3 px-4 ${location.pathname === "/e_requestedleave" ? 'bg-whatsapp-green text-white' : 'hover:bg-whatsapp-green text-green-900'} font-custom rounded-md text-decoration-none mb-2`}
 
 >

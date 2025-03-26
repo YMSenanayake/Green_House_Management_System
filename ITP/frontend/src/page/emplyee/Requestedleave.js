@@ -37,7 +37,7 @@ function Requestedleave() {
           text: 'Start date must be before end date.',
           customClass: {
             popup: 'rounded-2xl',
-            confirmButton: 'bg-blue-600 hover:bg-blue-700 rounded-xl'
+            confirmButton: 'bg-green-600 hover:bg-green-700 rounded-xl'
           }
         });
         return;
@@ -60,7 +60,7 @@ function Requestedleave() {
         text: 'Please select a valid date range.',
         customClass: {
           popup: 'rounded-2xl',
-          confirmButton: 'bg-blue-600 hover:bg-blue-700 rounded-xl'
+          confirmButton: 'bg-green-600 hover:bg-green-700 rounded-xl'
         }
       });
       return;
@@ -73,7 +73,7 @@ function Requestedleave() {
         text: 'Please provide a more detailed reason for your leave.',
         customClass: {
           popup: 'rounded-2xl',
-          confirmButton: 'bg-blue-600 hover:bg-blue-700 rounded-xl'
+          confirmButton: 'bg-green-600 hover:bg-green-700 rounded-xl'
         }
       });
       return;
@@ -145,12 +145,12 @@ function Requestedleave() {
   // Status configuration for consistent styling
   const STATUS_CONFIG = {
     Pending: {
-      color: 'text-blue-600 bg-blue-50 border-blue-200',
+      color: 'text-green-600 bg-green-50 border-green-200',
       icon: PendingIcon,
       description: 'Your request is under review'
     },
     Approved: {
-      color: 'text-green-600 bg-green-50 border-green-200',
+      color: 'text-emerald-600 bg-emerald-50 border-emerald-200',
       icon: ApprovedIcon,
       description: 'Leave request approved'
     },
@@ -162,15 +162,12 @@ function Requestedleave() {
   };
 
   return (
-
-    
-    <div className="min-h-screen bg-gray-100 p-6">
-      
+    <div className="min-h-screen bg-green-50 p-6">
       <div className="container mx-auto max-w-6xl space-y-8">
         {/* Professional Header */}
-        <div className="bg-white shadow-md rounded-2xl p-6 border-l-4 border-blue-500">
+        <div className="bg-white shadow-md rounded-2xl p-6 border-l-4 border-green-500">
           <h1 className="text-3xl font-bold text-gray-800 flex items-center">
-            <CalendarIcon className="mr-4 text-blue-600" size={36} />
+            <CalendarIcon className="mr-4 text-green-600" size={36} />
             Leave Management
           </h1>
           <p className="text-gray-500 mt-2">
@@ -179,7 +176,7 @@ function Requestedleave() {
         </div>
 
         {/* Leave Request Form */}
-        <div className="bg-white shadow-lg rounded-2xl p-8 border border-gray-100">
+        <div className="bg-white shadow-lg rounded-2xl p-8 border border-green-100">
           <form onSubmit={leaveRequest} className="grid md:grid-cols-3 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -202,16 +199,16 @@ function Requestedleave() {
                 placeholder="Describe the reason for your leave request"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full px-4 py-2 rounded-xl border border-gray-300 
-                           focus:ring-2 focus:ring-blue-200 transition-all resize-none"
+                className="w-full px-4 py-2 rounded-xl border border-green-300 
+                           focus:ring-2 focus:ring-green-200 transition-all resize-none"
               />
             </div>
             <div className="flex items-end">
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 text-white py-3 rounded-xl 
-                           hover:bg-blue-700 transition-colors 
+                className="w-full bg-green-600 text-white py-3 rounded-xl 
+                           hover:bg-green-700 transition-colors 
                            flex items-center justify-center gap-2
                            disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -232,7 +229,7 @@ function Requestedleave() {
 
         {/* Leave Requests Table */}
         <div className="bg-white shadow-lg rounded-2xl overflow-hidden">
-          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+          <div className="px-6 py-4 bg-green-50 border-b border-green-200">
             <h2 className="text-xl font-semibold text-gray-800">
               Your Leave Requests
             </h2>
@@ -240,13 +237,13 @@ function Requestedleave() {
           
           {leaves.length === 0 ? (
             <div className="text-center py-12 text-gray-500">
-              <CalendarIcon size={48} className="mx-auto mb-4 text-gray-300" />
+              <CalendarIcon size={48} className="mx-auto mb-4 text-green-300" />
               No leave requests found
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-100">
+                <thead className="bg-green-100">
                   <tr>
                     {['#', 'From', 'To', 'Duration', 'Reason', 'Status'].map((header) => (
                       <th 
@@ -266,7 +263,7 @@ function Requestedleave() {
                     return (
                       <tr 
                         key={leave._id} 
-                        className="border-b hover:bg-gray-50 transition-colors"
+                        className="border-b hover:bg-green-50 transition-colors"
                       >
                         <td className="px-6 py-4">{index + 1}</td>
                         <td className="px-6 py-4">{leave.fromdate}</td>

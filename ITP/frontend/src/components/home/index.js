@@ -55,7 +55,7 @@ function Homepage() {
                 data-aos="zoom in"
                 className="relative mt-7 text-2xl font-light tracking-[2.00px] max-md:max-w-full"
               >
-                Online Enclosed Polytunnel System
+                Online Green House Management System
               </div>
               <Link to="/c_displayitem">
                 <button

@@ -12,21 +12,23 @@ import {
   Select,
   Dropdown,
   Menu,
-  Input
+  Input,
+  Card,
+  Divider
 } from "antd";
 import { 
   CheckCircleOutlined, 
   CloseCircleOutlined, 
   EyeOutlined,
-  MoreOutlined,
-  EditOutlined,
   SearchOutlined,
-  SettingOutlined
+  SettingOutlined,
+  FilterOutlined,
+  CalendarOutlined
 } from "@ant-design/icons";
 import moment from "moment";
 import Swal from "sweetalert2";
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
 const { RangePicker } = DatePicker;
 const { Search } = Input;
 
@@ -40,6 +42,17 @@ function Approveleave() {
   const [filterStatus, setFilterStatus] = useState(null);
   const [dateRange, setDateRange] = useState([null, null]);
   const [searchText, setSearchText] = useState("");
+
+  // Enhanced UI Colors with Green Palette
+  const UI_COLORS = {
+    PRIMARY: '#2ecc71',       // Vibrant Green
+    SECONDARY: '#27ae60',     // Dark Green
+    SUCCESS: '#27ae60',       // Success Green
+    ERROR: '#e74c3c',         // Soft Red
+    WARNING: '#f39c12',       // Amber
+    BACKGROUND: '#f0f5f0',    // Light Green-Tinted Background
+    TEXT: '#2c3e50'           // Dark Slate Gray
+  };
 
   // Centralized API Error Handling
   const handleApiError = useCallback((error, errorMessage) => {
@@ -231,13 +244,20 @@ function Approveleave() {
     </Menu>
   );
 
-  // Table Columns Configuration
+  // Columns Configuration
   const columns = [
     {
       title: 'Employee Name',
       dataIndex: 'userid',
       key: 'userid',
-      render: (userid) => usersMap[userid] || userid,
+      render: (userid) => (
+        <div className="flex items-center">
+          <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
+            {usersMap[userid]?.charAt(0).toUpperCase() || '?'}
+          </div>
+          <Text strong>{usersMap[userid] || userid}</Text>
+        </div>
+      ),
       sorter: (a, b) => 
         (usersMap[a.userid] || '').localeCompare(usersMap[b.userid] || '')
     },
@@ -295,76 +315,173 @@ function Approveleave() {
     }
   ];
 
+  // Rest of the component remains the same as in the previous version
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <Title level={2} className="text-center mb-6">
-        Employee Leave Request
-      </Title>
-
-      {/* Filters Section */}
-      <div className="mb-6 flex justify-between items-center">
-        <Space>
-          <Search
-            placeholder="Search by employee or reason"
-            allowClear
-            style={{ width: 250 }}
-            onSearch={(value) => setSearchText(value)}
-            onChange={(e) => setSearchText(e.target.value)}
-          />
-
-          <Select
-            placeholder="Filter by Status"
-            style={{ width: 150 }}
-            allowClear
-            onChange={(value) => setFilterStatus(value)}
-          >
-            <Select.Option value="Pending">Pending</Select.Option>
-            <Select.Option value="Approved">Approved</Select.Option>
-            <Select.Option value="Rejected">Rejected</Select.Option>
-          </Select>
-
-          <RangePicker 
-            onChange={(dates) => setDateRange(dates)}
-          />
-        </Space>
-      </div>
-
-      {/* Leave Requests Table */}
-      <Table 
-        columns={columns}
-        dataSource={filteredLeaves}
-        loading={loading}
-        rowKey="_id"
-        pagination={{ 
-          showSizeChanger: true, 
-          pageSizeOptions: ['10', '20', '50'],
-          showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} leave requests`
+    <div 
+      className="p-6 min-h-screen"
+      style={{ 
+        background: `linear-gradient(135deg, ${UI_COLORS.BACKGROUND} 0%, #ffffff 100%)`,
+        color: UI_COLORS.TEXT
+      }}
+    >
+      <Card 
+        className="shadow-lg rounded-xl"
+        style={{ 
+          borderColor: UI_COLORS.PRIMARY,
+          backgroundColor: 'white'
         }}
-      />
+        extra={
+          <Tooltip title="Refresh Data">
+            <Button 
+              icon={<SettingOutlined />} 
+              type="text" 
+              style={{ color: UI_COLORS.PRIMARY }}
+              onClick={fetchData}
+            />
+          </Tooltip>
+        }
+      >
+        {/* Rest of the render method remains the same */}
+        <Title 
+          level={2} 
+          className="text-center mb-6"
+          style={{ 
+            color: UI_COLORS.PRIMARY,
+            borderBottomColor: UI_COLORS.PRIMARY,
+            paddingBottom: 10,
+            borderBottomWidth: 2,
+            borderBottomStyle: 'solid'
+          }}
+        >
+          <CalendarOutlined style={{ marginRight: 10, color: UI_COLORS.SECONDARY }} />
+          Employee Leave Management
+        </Title>
 
-      {/* Details Modal */}
+        {/* Filters and Table sections remain the same */}
+        <Card 
+          type="inner" 
+          title="Filters" 
+          extra={<FilterOutlined style={{ color: UI_COLORS.PRIMARY }} />}
+          className="mb-6"
+          style={{ 
+            borderColor: UI_COLORS.PRIMARY,
+            backgroundColor: '#f9fff9'
+          }}
+        >
+          <Space direction="horizontal" size="middle">
+            <Search
+              placeholder="Search by employee or reason"
+              allowClear
+              style={{ width: 250 }}
+              prefix={<SearchOutlined style={{ color: UI_COLORS.PRIMARY }} />}
+              onSearch={(value) => setSearchText(value)}
+              onChange={(e) => setSearchText(e.target.value)}
+            />
+
+            <Select
+              placeholder="Filter by Status"
+              style={{ width: 150 }}
+              allowClear
+              onChange={(value) => setFilterStatus(value)}
+              suffixIcon={<FilterOutlined style={{ color: UI_COLORS.PRIMARY }} />}
+            >
+              <Select.Option value="Pending">Pending</Select.Option>
+              <Select.Option value="Approved">Approved</Select.Option>
+              <Select.Option value="Rejected">Rejected</Select.Option>
+            </Select>
+
+            <RangePicker 
+              style={{ 
+                borderColor: UI_COLORS.PRIMARY,
+                outline: 'none'
+              }}
+              onChange={(dates) => setDateRange(dates)}
+            />
+          </Space>
+        </Card>
+
+        <Table 
+          columns={columns}
+          dataSource={filteredLeaves}
+          loading={loading}
+          rowKey="_id"
+          pagination={{ 
+            showSizeChanger: true, 
+            pageSizeOptions: ['10', '20', '50'],
+            showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} leave requests`,
+            size: 'default',
+            style: { color: UI_COLORS.PRIMARY }
+          }}
+          rowClassName={(record) => 
+            record.status === 'Pending' ? 'bg-yellow-50' : 
+            record.status === 'Approved' ? 'bg-green-50' : 'bg-red-50'
+          }
+        />
+      </Card>
+
+      {/* Modal section remains the same */}
       {selectedLeave && (
         <Modal
-          title="Leave Request Details"
+          title={
+            <div className="flex items-center">
+              <EyeOutlined style={{ marginRight: 10, color: UI_COLORS.PRIMARY }} />
+              <span style={{ color: UI_COLORS.PRIMARY }}>Leave Request Details</span>
+            </div>
+          }
           visible={!!selectedLeave}
           onCancel={() => setSelectedLeave(null)}
           footer={[
-            <Button key="close" onClick={() => setSelectedLeave(null)}>
+            <Button 
+              key="close" 
+              onClick={() => setSelectedLeave(null)}
+              style={{ 
+                backgroundColor: UI_COLORS.PRIMARY, 
+                borderColor: UI_COLORS.PRIMARY,
+                color: 'white'
+              }}
+            >
               Close
             </Button>
           ]}
         >
-          <div>
-            <p><strong>Employee:</strong> {usersMap[selectedLeave.userid]}</p>
-            <p><strong>From Date:</strong> {moment(selectedLeave.fromdate).format('DD MMM YYYY')}</p>
-            <p><strong>To Date:</strong> {moment(selectedLeave.todate).format('DD MMM YYYY')}</p>
-            <p><strong>Reason:</strong> {selectedLeave.description}</p>
-            <p><strong>Status:</strong> 
-              <Tag color={getStatusColor(selectedLeave.status)}>
-                {selectedLeave.status}
-              </Tag>
-            </p>
-          </div>
+          <Card 
+            style={{ 
+              backgroundColor: '#f0fff0',
+              borderColor: UI_COLORS.PRIMARY
+            }}
+          >
+            <Paragraph>
+              <Text strong style={{ color: UI_COLORS.TEXT }}>Employee: </Text>
+              <Text style={{ color: UI_COLORS.SECONDARY }}>{usersMap[selectedLeave.userid]}</Text>
+            </Paragraph>
+            <Divider style={{ borderColor: UI_COLORS.PRIMARY }} />
+            <Space direction="vertical" size="small" style={{ width: '100%' }}>
+              <div>
+                <Text strong style={{ color: UI_COLORS.TEXT }}>From Date: </Text>
+                <Text style={{ color: UI_COLORS.SECONDARY }}>
+                  {moment(selectedLeave.fromdate).format('DD MMM YYYY')}
+                </Text>
+              </div>
+              <div>
+                <Text strong style={{ color: UI_COLORS.TEXT }}>To Date: </Text>
+                <Text style={{ color: UI_COLORS.SECONDARY }}>
+                  {moment(selectedLeave.todate).format('DD MMM YYYY')}
+                </Text>
+              </div>
+              <div>
+                <Text strong style={{ color: UI_COLORS.TEXT }}>Reason: </Text>
+                <Text style={{ color: UI_COLORS.SECONDARY }}>
+                  {selectedLeave.description}
+                </Text>
+              </div>
+              <div>
+                <Text strong style={{ color: UI_COLORS.TEXT }}>Status: </Text>
+                <Tag color={getStatusColor(selectedLeave.status)}>
+                  {selectedLeave.status}
+                </Tag>
+              </div>
+            </Space>
+          </Card>
         </Modal>
       )}
     </div>
