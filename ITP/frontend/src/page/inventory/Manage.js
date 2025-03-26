@@ -338,7 +338,7 @@ function Manage() {
                     </div>
                     <div className="mt-4">
                       <input
-                        type="number"
+                        type="price"
                         placeholder="Enter Price"
                         className="mt-1 p-2 block w-full rounded-3xl bg-wight-green border-noneborder-gray focus:outline-whatsapp-green placeholder-gray-500 placeholder-opacity-50 font-custom text-sm focus:border-transparent transition-all duration-700 outline-none"
                         required
@@ -351,7 +351,7 @@ function Manage() {
                         type="number"
                         placeholder="Enter Quantity"
                         className="mt-1 p-2 block w-full rounded-3xl bg-wight-green border-noneborder-gray focus:outline-whatsapp-green placeholder-gray-500 placeholder-opacity-50 font-custom text-sm focus:border-transparent transition-all duration-700 outline-none"
-                        required
+                        required min = "0"
                         value={quantity}
                         onChange={(e) => setquantity(e.target.value)}
                       />

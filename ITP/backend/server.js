@@ -1,8 +1,8 @@
 require("dotenv").config(); // Load environment variables
-
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+
 
 // Initialize Express App
 const app = express();
@@ -12,16 +12,25 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
 
+
+//sample Route
+app.get("/",(req, res) => {
+  res.send("Hello, MongoDB is Connected!");
+});
+
 // Import Database Connection
 require("./db");
 
-// Define Routes (Example)
-app.get("/", (req, res) => {
-  res.send( "Server is running!");
-});
+const itemhistoryRoutes = require("./routes/ItemhistoryRoute")
+const inventoryRoutes = require("./routes/inventoryRoute");
+
+
+app.use("/api/inventory", inventoryRoutes);
+app.use("/api/inventory", itemhistoryRoutes);
+
 
 // Start Server
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server is running on: http://localhost:${port}`);
 });
