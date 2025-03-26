@@ -30,7 +30,6 @@ function Employeedashboard() {
         setStatusCounts(response.data);
         setLoading(false);
       })
-
       .catch((error) => {
         console.error("Error fetching status counts:", error);
         setLoading(false);
@@ -97,6 +96,18 @@ function Employeedashboard() {
     fetchData();
   }, []);
 
+  // Enhanced color palette with more professional colors
+  const ROLE_COLORS = {
+    employee: "#14532d",
+    courier: "#365314",
+    user: "#65a30d",
+    target: "#a3e635",
+    financial: "#fcd34d",
+    inventory: "#48c81b",
+    machine: "#22c55e",
+    tunnel: "#15803d"
+  };
+
   useEffect(() => {
     if (roleCounts && Object.keys(roleCounts).length > 0) {
       setData({
@@ -104,16 +115,7 @@ function Employeedashboard() {
         datasets: [
           {
             data: Object.values(roleCounts),
-            backgroundColor: [
-              "#14532d", //employee
-              "#365314", //curior
-              "#65a30d", //user
-              "#a3e635", //target
-              "#fcd34d", //financial
-              "#48c81b", //inventory
-              "#22c55e", //machine
-              "#15803d", //tunel
-            ],
+            backgroundColor: Object.keys(roleCounts).map(role => ROLE_COLORS[role] || "#000"),
           },
         ],
       });
@@ -121,168 +123,166 @@ function Employeedashboard() {
   }, [roleCounts]);
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-100">
       {loading ? (
         <Loader />
       ) : (
-        <>
+        <div className="container mx-auto px-4 py-8">
           <div className="flex">
             <Adminnavbar />
-            <div className="ml-80 mt-6  ">
-              <h1 className="flex justify-center font-semibold text-center italic text-2xl">
-                Employee Leaves Summary
-              </h1>
-              {/* Radial Progress Chart for Pending Percentage 
-          
-          <div>
-                Pending: {statusCounts.pending?.percentage}% ({statusCounts.pending?.count})
-            </div>
-            <div>
-                Approved: {statusCounts.approved?.percentage}% ({statusCounts.approved?.count})
-            </div>
-            <div>
-                Disapproved: {statusCounts.disapproved?.percentage}% ({statusCounts.disapproved?.count})
-            </div>
-          
-          */}{" "}
-              <h1
-                data-aos="zoom in"
-                className="flex justify-center text-black-green text-1xl mt-4"
-              >
-                Pending({statusCounts.pending?.count})
-              </h1>
-              <div class="flex justify-center max-w-sm p-6 ml-6 transition-transform duration-300 ease-in-out transform hover:scale-110">
-                <div data-aos="zoom out" style={{ width: 150, height: 150 }}>
-                  <CircularProgressbar
-                    value={statusCounts.pending?.percentage}
-                    text={`${statusCounts.pending?.percentage}%`}
-                    styles={buildStyles({
-                      pathColor: "#48c81b",
-                      textColor: "#48c81b",
-                      trailColor: "#d6d6d6",
-                    })}
-                    className="transition-transform duration-300 ease-in-out transform hover:scale-110"
-                  />
-                </div>
-              </div>
-              <div className="flex gap-8 mt-4">
-                <div class="max-w-sm p-6 ">
-                  <h1
-                    data-aos="zoom in"
-                    className="flex justify-center text-black-green text-1xl mb-4 "
+            <div className="flex-grow ml-64 space-y-8">
+              {/* Employee Leaves Summary Card */}
+              <div className="bg-white shadow-lg rounded-lg p-6 border-t-4 border-green-500">
+                <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
+                  Employee Leaves Summary
+                </h1>
+                
+                <div className="grid grid-cols-3 gap-6">
+                  {/* Pending Leaves */}
+                  <div 
+                    data-aos="zoom-in" 
+                    className="bg-gray-50 p-4 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 ease-in-out"
                   >
-                    Approved({statusCounts.approved?.count})
-                  </h1>
-                  <div data-aos="zoom out" style={{ width: 150, height: 150 }}>
-                    <CircularProgressbar
-                      value={statusCounts.approved?.percentage}
-                      text={`${statusCounts.approved?.percentage}%`}
-                      styles={buildStyles({
-                        pathColor: "#48c81b",
-                        textColor: "#48c81b",
-                        trailColor: "#d6d6d6",
-                      })}
-                      className="transition-transform duration-300 ease-in-out transform hover:scale-110"
-                    />
-                  </div>
-                </div>
-
-                <div class="max-w-sm p-6">
-                  <h1
-                    data-aos="zoom in"
-                    className="flex justify-center text-black-green text-1xl mb-4"
-                  >
-                    Disapproved({statusCounts.disapproved?.count})
-                  </h1>
-                  <div data-aos="zoom out" style={{ width: 150, height: 150 }}>
-                    <CircularProgressbar
-                      value={statusCounts.disapproved?.percentage}
-                      text={`${statusCounts.disapproved?.percentage}%`}
-                      styles={buildStyles({
-                        pathColor: "#48c81b",
-                        textColor: "#48c81b",
-                        trailColor: "#d6d6d6",
-                      })}
-                      className="transition-transform duration-300 ease-in-out transform hover:scale-110"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div
-              data-aos="zoom out"
-              className="w-96 ml-40 h-2xl bg-wight-green shadow-lg rounded-lg p-2 mt-6 mb-1  "
-            >
-              <h2 className="text-2xl font-semibold text-center italic">
-                Summary of user count
-              </h2>
-              {data && <Pie data={data} />}
-
-              {/* Render role counts in two columns */}
-              {Object.keys(roleCounts).length > 0 && (
-                <div className="flex">
-                  <div>
-                    <ul>
-                      <li>
-                        <div className="bg-green-900 h-2.5 w-2 mt-4 p-1.5"></div>
-                      </li>
-                      <li>
-                        <div className="bg-lime-900 h-2.5 w-2 mt-7 p-1.5"></div>
-                      </li>
-                      <li>
-                        <div className="bg-lime-600 h-2.5 w-2 mt-7 p-1.5"></div>
-                      </li>
-                      <li>
-                        <div className="bg-lime-400 h-2.5 w-2 mt-7 p-1.5"></div>
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="flex w-1/2">
-                    <ul>
-                      {Object.entries(roleCounts)
-                        .slice(0, Math.ceil(Object.keys(roleCounts).length / 2))
-                        .map(([role, count]) => (
-                          <li key={role} className="p-2">
-                            <span className="text-green-900">{role}:</span>{" "}
-                            {count}
-                          </li>
-                        ))}
-                    </ul>
-                  </div>
-                  <div className="flex w-1/2">
-                    <div>
-                      <ul>
-                        <li>
-                          <div className="bg-amber-300 h-2.5 w-2 mt-4 p-1.5"></div>
-                        </li>
-                        <li>
-                          <div className="bg-whatsapp-green h-2.5 w-2 mt-7 p-1.5"></div>
-                        </li>
-                        <li>
-                          <div className="bg-green-500 h-2.5 w-2 mt-7 p-1.5"></div>
-                        </li>
-                        <li>
-                          <div className="bg-green-800 h-2.5 w-2 mt-7 p-1.5"></div>
-                        </li>
-                      </ul>
+                    <h2 className="text-lg font-semibold text-center text-gray-700 mb-4">
+                      Pending ({statusCounts.pending?.count})
+                    </h2>
+                    <div className="flex justify-center">
+                      <div style={{ width: 150, height: 150 }}>
+                        <CircularProgressbar
+                          value={statusCounts.pending?.percentage}
+                          text={`${statusCounts.pending?.percentage}%`}
+                          styles={buildStyles({
+                            pathColor: "#48c81b",
+                            textColor: "#48c81b",
+                            trailColor: "#e6e6e6",
+                          })}
+                          className="transform transition-transform duration-300 hover:scale-105"
+                        />
+                      </div>
                     </div>
-                    <ul>
-                      {Object.entries(roleCounts)
-                        .slice(Math.ceil(Object.keys(roleCounts).length / 2))
-                        .map(([role, count]) => (
-                          <li key={role} className="p-2">
-                            <span className="text-green-900">{role}:</span>{" "}
-                            {count}
-                          </li>
-                        ))}
-                    </ul>
+                  </div>
+
+                  {/* Approved Leaves */}
+                  <div 
+                    data-aos="zoom-in" 
+                    className="bg-gray-50 p-4 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 ease-in-out"
+                  >
+                    <h2 className="text-lg font-semibold text-center text-gray-700 mb-4">
+                      Approved ({statusCounts.approved?.count})
+                    </h2>
+                    <div className="flex justify-center">
+                      <div style={{ width: 150, height: 150 }}>
+                        <CircularProgressbar
+                          value={statusCounts.approved?.percentage}
+                          text={`${statusCounts.approved?.percentage}%`}
+                          styles={buildStyles({
+                            pathColor: "#48c81b",
+                            textColor: "#48c81b",
+                            trailColor: "#e6e6e6",
+                          })}
+                          className="transform transition-transform duration-300 hover:scale-105"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Disapproved Leaves */}
+                  <div 
+                    data-aos="zoom-in" 
+                    className="bg-gray-50 p-4 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 ease-in-out"
+                  >
+                    <h2 className="text-lg font-semibold text-center text-gray-700 mb-4">
+                      Disapproved ({statusCounts.disapproved?.count})
+                    </h2>
+                    <div className="flex justify-center">
+                      <div style={{ width: 150, height: 150 }}>
+                        <CircularProgressbar
+                          value={statusCounts.disapproved?.percentage}
+                          text={`${statusCounts.disapproved?.percentage}%`}
+                          styles={buildStyles({
+                            pathColor: "#48c81b",
+                            textColor: "#48c81b",
+                            trailColor: "#e6e6e6",
+                          })}
+                          className="transform transition-transform duration-300 hover:scale-105"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
-              )}
+              </div>
+
+              {/* User Count Summary Card */}
+              <div 
+                data-aos="zoom-out" 
+                className="bg-white shadow-lg rounded-lg p-6 border-t-4 border-blue-500"
+              >
+                <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+                  User Role Distribution
+                </h2>
+                
+                <div className="grid grid-cols-2 gap-6">
+                  {/* Pie Chart */}
+                  <div className="flex justify-center items-center">
+                    {data && (
+                      <div className="w-full max-w-xs">
+                        <Pie 
+                          data={data} 
+                          options={{
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            plugins: {
+                              legend: {
+                                position: 'bottom',
+                                labels: {
+                                  boxWidth: 20,
+                                  usePointStyle: true,
+                                }
+                              }
+                            }
+                          }} 
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Role Counts with Progress Bars */}
+                  <div className="space-y-4">
+                    {Object.entries(roleCounts).map(([role, count]) => {
+                      // Calculate percentage of total users
+                      const totalUsers = Object.values(roleCounts).reduce((a, b) => a + b, 0);
+                      const percentage = ((count / totalUsers) * 100).toFixed(1);
+
+                      return (
+                        <div 
+                          key={role} 
+                          className="bg-gray-50 p-4 rounded-lg shadow-md"
+                        >
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="font-semibold text-gray-700 capitalize">{role}</span>
+                            <span className="text-green-600 font-bold">{count}</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2.5">
+                            <div 
+                              className="h-2.5 rounded-full" 
+                              style={{
+                                width: `${percentage}%`, 
+                                backgroundColor: ROLE_COLORS[role] || "#000"
+                              }}
+                            ></div>
+                          </div>
+                          <div className="text-xs text-gray-500 mt-1 text-right">
+                            {percentage}% of total users
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </>
+        </div>
       )}
     </div>
   );
