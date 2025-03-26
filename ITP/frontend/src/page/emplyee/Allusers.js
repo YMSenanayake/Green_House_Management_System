@@ -12,6 +12,10 @@ import "aos/dist/aos.css";
 import "jspdf-autotable";
 import autoTable from 'jspdf-autotable';
 import { useNavigate } from "react-router-dom";
+import logo from "../../components/header/logo.png";
+ 
+// jsPDF and its plugins
+
 
 AOS.init({
   duration: 2500,
@@ -76,6 +80,9 @@ function Allusers() {
   const [phone, setphone] = useState("");
   const [password, setpassword] = useState("");
   const [cpassword, setcpassword] = useState("");
+
+
+  const logoBase64 = 'https://img.freepik.com/free-vector/bird-colorful-logo-gradient-vector_343694-1365.jpg?ga=GA1.1.1249355359.1742841661&semt=ais_hybrid'; // Replace with actual logo
 
   async function adduser(event) {
     event.preventDefault();
@@ -185,64 +192,128 @@ function Allusers() {
 
   // Generate PDF report
   const generateReport = () => {
-    if (users.length === 0) {
-      Swal.fire("No data", "There are no users to generate a report.", "info");
+    if (!users || users.length === 0) {
+      Swal.fire({
+        icon: "info",
+        title: "No Data",
+        text: "There are no users to generate a report.",
+        confirmButtonColor: "#3085d6",
+      });
       return;
     }
   
     Swal.fire({
-      title: "Generate PDF",
-      text: "Are you sure you want to generate the PDF report?",
-      icon: "warning",
+      title: "Generate Users Report",
+      text: "Do you want to create a professional PDF report?",
+      icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Generate",
+      confirmButtonText: "Generate Report",
       cancelButtonText: "Cancel",
     }).then((result) => {
       if (result.isConfirmed) {
         try {
-          const doc = new jsPDF();
-          const currentDate = new Date().toLocaleDateString();
-          const currentTime = new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          });
-          const pdfName = `Users_Report_${currentDate}.pdf`;
+          const doc = new jsPDF("p", "mm", "a4");
+          const pageWidth = doc.internal.pageSize.getWidth();
+          const pageHeight = doc.internal.pageSize.getHeight();
   
-          doc.setFontSize(20);
-          doc.text("Users Report", 20, 20);
+          const colors = {
+            primary: [41, 128, 186],
+            secondary: [52, 152, 219],
+            text: [0, 0, 0],
+            background: [240, 240, 240],
+          };
   
-          doc.setFontSize(12);
-          doc.text(`Date: ${currentDate}`, 20, 30);
-          doc.text(`Time: ${currentTime}`, doc.internal.pageSize.getWidth() - 50, 30);
+          // Add header function
+          const addHeader = () => {
+            doc.addImage(logo, "png", 15, 10, 40, 15);
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(16);
+            doc.setTextColor(...colors.text);
+            doc.text("Users Management Report", pageWidth / 2, 25, { align: "center" });
   
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            doc.text(`Generated: ${new Date().toLocaleString()}`, pageWidth - 20, 20, { align: "right" });
+          };
+  
+          // Add footer function
+          const addFooter = (pageNum, totalPages) => {
+            doc.setFillColor(...colors.primary);
+            doc.rect(0, pageHeight - 15, pageWidth, 15, "F");
+  
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(9);
+            doc.text(`Page ${pageNum} of ${totalPages}`, pageWidth / 2, pageHeight - 5, { align: "center" });
+            doc.text("© " + new Date().getFullYear() + " User Management System", 15, pageHeight - 5);
+            doc.text("Confidential", pageWidth - 15, pageHeight - 5, { align: "right" });
+          };
+  
+          // Table Data
           const headers = ["Name", "Email", "Phone", "Role"];
-          const data = users.map((user) => [
-            user.fullName || "-",
-            user.email || "-",
-            user.phone || "-",
-            user.role || "-",
+          const tableData = users.map((user) => [
+            user.fullName || "N/A",
+            user.email || "N/A",
+            user.phone || "N/A",
+            user.role || "N/A",
           ]);
   
+          // Generate Table
           autoTable(doc, {
             head: [headers],
-            body: data,
+            body: tableData,
             startY: 40,
-            headStyles: { fillColor: [72, 200, 27], textColor: [255, 255, 255] }
+            theme: "striped",
+            headStyles: {
+              fillColor: colors.primary,
+              textColor: [255, 255, 255],
+              fontSize: 11,
+              fontStyle: "bold",
+            },
+            bodyStyles: {
+              textColor: colors.text,
+              fontSize: 10,
+            },
+            alternateRowStyles: {
+              fillColor: colors.background,
+            },
+            columnStyles: {
+              0: { cellWidth: 45 },
+              1: { cellWidth: 55 },
+              2: { cellWidth: 40 },
+              3: { cellWidth: 40 },
+            },
+            didDrawPage: (data) => {
+              addHeader();
+              addFooter(doc.internal.getNumberOfPages(), doc.internal.getNumberOfPages());
+            },
           });
   
-          doc.save(pdfName);
-          Swal.fire("PDF Generated!", "", "success");
+          // Save PDF
+          const timestamp = new Date().toISOString().replace(/[:T]/g, "-").split(".")[0];
+          const filename = `Users_Report_${timestamp}.pdf`;
+          doc.save(filename);
+  
+          Swal.fire({
+            icon: "success",
+            title: "Report Generated",
+            text: `Professional PDF report saved as ${filename}`,
+            confirmButtonColor: "#3085d6",
+          });
         } catch (error) {
-          console.error("PDF generation error:", error);
-          Swal.fire("Error", "Failed to generate PDF: " + error.message, "error");
+          console.error("PDF Generation Error:", error);
+          Swal.fire({
+            icon: "error",
+            title: "PDF Generation Failed",
+            text: error.message || "An unexpected error occurred",
+            confirmButtonColor: "#d33",
+          });
         }
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-        Swal.fire("Cancelled", "PDF generation cancelled", "info");
       }
     });
   };
+  
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -380,14 +451,18 @@ function Allusers() {
               </h2>
 
               <form onSubmit={adduser} className="space-y-5">
-                <input
-                  type="text"
-                  placeholder="Enter user name"
-                  value={fullName}
-                  onChange={(e) => setfullName(e.target.value)}
-                  className="w-full p-3 rounded-3xl bg-wight-green dark:bg-table-row border-none focus:outline-none focus:ring-2 focus:ring-whatsapp-green placeholder-gray-500 placeholder-opacity-70 font-custom text-md shadow-md transition-all duration-300"
-                  required
-                />
+              <input
+  type="text"
+  placeholder="Enter user name"
+  value={fullName}
+  onChange={(e) => {
+    const value = e.target.value.replace(/[^a-zA-Z0-9]/g, ""); // Allow only letters and numbers
+    setfullName(value);
+  }}
+  className="w-full p-3 rounded-3xl bg-wight-green dark:bg-table-row border-none focus:outline-none focus:ring-2 focus:ring-whatsapp-green placeholder-gray-500 placeholder-opacity-70 font-custom text-md shadow-md transition-all duration-300"
+  required
+/>
+
 
                 <input
                   type="email"
@@ -398,24 +473,25 @@ function Allusers() {
                   required
                 />
 
-                <input
-                  type="tel"
-                  placeholder="Enter phone"
-                  value={phone}
-                  onChange={(e) => setphone(e.target.value)}
-                  onInput={(e) => {
-                    const maxLength = 10;
-                    if (e.target.value.length > maxLength) {
-                      toast.error("Phone number cannot exceed 10 digits.");
-                      e.target.value = e.target.value.slice(0, maxLength);
-                      setphone(e.target.value);
-                    }
-                  }}
-                  className="w-full p-3 rounded-3xl bg-wight-green dark:bg-table-row border-none focus:outline-none focus:ring-2 focus:ring-whatsapp-green placeholder-gray-500 placeholder-opacity-70 font-custom text-md shadow-md transition-all duration-300"
-                  required
-                  minLength={10}
-                  maxLength={10}
-                />
+<input
+  type="text" // Change type to "text" to prevent issues with leading zeros
+  placeholder="Enter phone"
+  value={phone}
+  onChange={(e) => {
+    const value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
+    if (value.length <= 10) {
+      setphone(value);
+    }
+  }}
+  onBlur={() => {
+    if (phone.length !== 10) {
+      toast.error("Phone number must be exactly 10 digits.");
+    }
+  }}
+  className="w-full p-3 rounded-3xl bg-wight-green dark:bg-table-row border-none focus:outline-none focus:ring-2 focus:ring-whatsapp-green placeholder-gray-500 placeholder-opacity-70 font-custom text-md shadow-md transition-all duration-300"
+  required
+/>
+
 
                 <input
                   type="password"

@@ -8,7 +8,8 @@ import {
   Send as SendIcon, 
   Clock as PendingIcon, 
   CheckCircle as ApprovedIcon, 
-  XCircle as RejectedIcon 
+  XCircle as RejectedIcon,
+  FileText as FileTextIcon
 } from "lucide-react";
 
 const { RangePicker } = DatePicker;
@@ -176,56 +177,74 @@ function Requestedleave() {
         </div>
 
         {/* Leave Request Form */}
-        <div className="bg-white shadow-lg rounded-2xl p-8 border border-green-100">
-          <form onSubmit={leaveRequest} className="grid md:grid-cols-3 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Select Date Range
-              </label>
-              <RangePicker
-                format="DD-MM-YYYY"
-                onChange={filterByDate}
-                value={[fromdate, todate]}
-                className="w-full rounded-xl"
-                disabledDate={(current) => current && current < moment().startOf('day')}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Leave Reason
-              </label>
-              <textarea
-                rows={3}
-                placeholder="Describe the reason for your leave request"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full px-4 py-2 rounded-xl border border-green-300 
-                           focus:ring-2 focus:ring-green-200 transition-all resize-none"
-              />
-            </div>
-            <div className="flex items-end">
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-green-600 text-white py-3 rounded-xl 
-                           hover:bg-green-700 transition-colors 
-                           flex items-center justify-center gap-2
-                           disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? (
-                  <div className="animate-spin">
-                    <SendIcon size={20} />
-                  </div>
-                ) : (
-                  <>
-                    <SendIcon size={20} />
-                    Submit Leave Request
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
-        </div>
+        <div className="bg-white shadow-2xl rounded-3xl p-10 border-2 border-green-200 hover:shadow-xl transition-all duration-300">
+  <form onSubmit={leaveRequest} className="grid md:grid-cols-3 gap-8">
+    <div className="space-y-2">
+      <label className="block text-md font-semibold text-gray-700 mb-3 flex items-center">
+        <CalendarIcon className="mr-3 text-green-600" size={24} />
+        Select Date Range
+      </label>
+      <RangePicker
+        format="DD-MM-YYYY"
+        onChange={filterByDate}
+        value={[fromdate, todate]}
+        className="w-full rounded-2xl border-green-300 hover:border-green-500 transition-colors"
+        style={{
+          height: '48px',
+          padding: '0 12px'
+        }}
+        disabledDate={(current) => current && current < moment().startOf('day')}
+      />
+      <p className="text-xs text-gray-500 mt-2 pl-1">
+        * Cannot select past dates
+      </p>
+    </div>
+
+    <div className="space-y-2">
+      <label className="block text-md font-semibold text-gray-700 mb-3 flex items-center">
+        <FileTextIcon className="mr-3 text-green-600" size={24} />
+        Leave Reason
+      </label>
+      <input
+        placeholder="Enter your reason"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        className="w-full px-4 py-3 rounded-2xl border-2 border-green-300 
+                   focus:border-green-500 focus:ring-2 focus:ring-green-100 
+                   transition-all resize-none text-gray-700
+                   placeholder-gray-400"
+      />
+      <p className="text-xs text-gray-500 pl-1">
+        * Minimum 10 characters required
+      </p>
+    </div>
+
+    <div className="flex items-end">
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full bg-green-600 text-white py-4 rounded-2xl 
+                   hover:bg-green-700 transition-all duration-300 
+                   flex items-center justify-center gap-3
+                   disabled:opacity-50 disabled:cursor-not-allowed
+                   shadow-md hover:shadow-lg mb-6"
+      >
+        
+        {loading ? (
+          <div className="animate-spin">
+            <SendIcon size={24} className="text-white" />
+          </div>
+        ) : (
+          <>
+            <SendIcon size={24} />
+            <span className="font-semibold">Submit Leave Request</span>
+          </>
+        )}
+      </button>
+      
+    </div>
+  </form>
+</div>
 
         {/* Leave Requests Table */}
         <div className="bg-white shadow-lg rounded-2xl overflow-hidden">
