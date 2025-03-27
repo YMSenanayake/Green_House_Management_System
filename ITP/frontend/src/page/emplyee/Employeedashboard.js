@@ -267,7 +267,7 @@ function Employeedashboard() {
                               className="h-2.5 rounded-full" 
                               style={{
                                 width: `${percentage}%`, 
-                                backgroundColor: ROLE_COLORS[role] || "#000"
+                                backgroundColor: ROLE_COLORS[role] || "#17731B"
                               }}
                             ></div>
                           </div>
