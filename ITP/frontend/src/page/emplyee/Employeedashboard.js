@@ -97,16 +97,28 @@ function Employeedashboard() {
     fetchData();
   }, []);
 
-  // Enhanced color palette with more professional colors
+  // Enhanced color palette with professional and visually distinct colors
   const ROLE_COLORS = {
-    employee: "#14532d",
-    courier: "#365314",
-    user: "#65a30d",
-    target: "#a3e635",
-    financial: "#fcd34d",
-    inventory: "#48c81b",
-    machine: "#22c55e",
-    tunnel: "#15803d"
+    employee: "#3b82f6", // Blue
+    courier: "#8b5cf6", // Purple
+    user: "#ec4899", // Pink
+    target: "#f97316", // Orange
+    financial: "#f59e0b", // Amber
+    inventory: "#10b981", // Emerald
+    machine: "#14b8a6", // Teal
+    tunnel: "#06b6d4" // Cyan
+  };
+
+  // Hover colors (slightly lighter)
+  const ROLE_HOVER_COLORS = {
+    employee: "#60a5fa", // Lighter Blue
+    courier: "#a78bfa", // Lighter Purple
+    user: "#f472b6", // Lighter Pink
+    target: "#fb923c", // Lighter Orange
+    financial: "#fbbf24", // Lighter Amber
+    inventory: "#34d399", // Lighter Emerald
+    machine: "#2dd4bf", // Lighter Teal
+    tunnel: "#22d3ee" // Lighter Cyan
   };
 
   useEffect(() => {
@@ -116,7 +128,10 @@ function Employeedashboard() {
         datasets: [
           {
             data: Object.values(roleCounts),
-            backgroundColor: Object.keys(roleCounts).map(role => ROLE_COLORS[role] || "#000"),
+            backgroundColor: Object.keys(roleCounts).map(role => ROLE_COLORS[role] || "#6366f1"),
+            hoverBackgroundColor: Object.keys(roleCounts).map(role => ROLE_HOVER_COLORS[role] || "#818cf8"),
+            borderColor: "white",
+            borderWidth: 2,
           },
         ],
       });
@@ -239,8 +254,42 @@ function Employeedashboard() {
                                 labels: {
                                   boxWidth: 20,
                                   usePointStyle: true,
+                                  padding: 20,
+                                  font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                  }
+                                }
+                              },
+                              tooltip: {
+                                backgroundColor: 'rgba(0,0,0,0.8)',
+                                padding: 12,
+                                titleFont: {
+                                  size: 14,
+                                  weight: 'bold'
+                                },
+                                bodyFont: {
+                                  size: 13
+                                },
+                                displayColors: true,
+                                callbacks: {
+                                  label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                  }
                                 }
                               }
+                            },
+                            cutout: '0%',
+                            radius: '90%',
+                            animation: {
+                              animateScale: true,
+                              animateRotate: true,
+                              duration: 2000,
+                              easing: 'easeOutQuart'
                             }
                           }} 
                         />
@@ -258,18 +307,18 @@ function Employeedashboard() {
                       return (
                         <div 
                           key={role} 
-                          className="bg-gray-50 p-4 rounded-lg shadow-md"
+                          className="bg-gray-50 p-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
                         >
                           <div className="flex justify-between items-center mb-2">
                             <span className="font-semibold text-gray-700 capitalize">{role}</span>
-                            <span className="text-green-600 font-bold">{count}</span>
+                            <span className="text-gray-800 font-bold">{count}</span>
                           </div>
                           <div className="w-full bg-gray-200 rounded-full h-2.5">
                             <div 
-                              className="h-2.5 rounded-full" 
+                              className="h-2.5 rounded-full transition-all duration-500" 
                               style={{
                                 width: `${percentage}%`, 
-                                backgroundColor: ROLE_COLORS[role] || "#17731B"
+                                backgroundColor: ROLE_COLORS[role] || "#6366f1"
                               }}
                             ></div>
                           </div>
