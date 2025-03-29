@@ -16,7 +16,7 @@ function Navbar() {
   function Logout() {
     localStorage.removeItem("currentuser");
     localStorage.removeItem("user:detail");
-    window.location.href = "/login";
+    window.location.href = "/";
   }
 
   return (

@@ -4,58 +4,65 @@ import { LuLayoutDashboard } from "react-icons/lu";
 import { GiExitDoor } from "react-icons/gi";
 import { FaUsers } from "react-icons/fa";
 import { FaUserClock } from "react-icons/fa6";
-import Navbar from "../../../components/header/Navbar";
 
 import logo from "../../../Images/logo.png";
 
 function Adminnavbar() {
   const location = useLocation();
-
+  
+  const navItems = [
+    {
+      path: "/employeeDashboard",
+      icon: <LuLayoutDashboard className="text-xl" />,
+      label: "Dashboard"
+    },
+    {
+      path: "/e_allusers",
+      icon: <FaUsers className="text-xl" />,
+      label: "Users"
+    },
+    {
+      path: "/e_approveleave",
+      icon: <GiExitDoor className="text-xl" />,
+      label: "Leaves"
+    },
+    {
+      path: "/e_requestedleave",
+      icon: <FaUserClock className="text-xl" />,
+      label: "Leave Request"
+    }
+  ];
+  
   return (
-    <div className="bg-wight-green text-white h-screen w-1/6 fixed top-0 left-0 flex flex-col justify-between shadow-xl">
-
-    <div className="p-1 mt-2">
-    <Navbar/>
-        <Link            to="/employeeDashboard"
-            className={`flex items-center w-full mt-6 py-3 px-4 ${location.pathname === "/employeeDashboard" ? 'bg-whatsapp-green text-white' : 'hover:bg-whatsapp-green text-green-900'} font-custom rounded-md text-decoration-none mb-2`}
-
-     
-        >
-          <LuLayoutDashboard className="mr-5 text-lg" />
-          <span className="font-bold text-lg">Dash Board</span>
-        </Link>
-        <Link
-
-            to="/e_allusers"
-            className={`flex items-center w-full mt-3 py-3 px-4 ${location.pathname === "/e_allusers" ? 'bg-whatsapp-green text-white' : 'hover:bg-whatsapp-green text-green-900'} font-custom rounded-md text-decoration-none mb-2`}
-
-        >
-          <FaUsers className="mr-5 text-lg" />
-          <span className="font-bold text-lg">Users</span>
-        </Link>
-        <Link
-
-            to="/e_approveleave"
-            className={`flex items-center w-full mt-3 py-3 px-4 ${location.pathname === "/e_approveleave" ? 'bg-whatsapp-green text-white' : 'hover:bg-whatsapp-green text-green-900'} font-custom rounded-md text-decoration-none mb-2`}
-
-        >
-          <GiExitDoor className="mr-5 text-lg" />
-          <span className="font-bold text-lg">leaves</span>
-        </Link>
-        <Link
-
-to="/e_requestedleave"
-className={`flex items-center w-full mt-3 py-3 px-4 ${location.pathname === "/e_requestedleave" ? 'bg-whatsapp-green text-white' : 'hover:bg-whatsapp-green text-green-900'} font-custom rounded-md text-decoration-none mb-2`}
-
->
-<FaUserClock className="mr-5 text-lg" />
-<span className="font-bold text-lg">Leave Request</span>
-</Link>
+    <div className="bg-gradient-to-b from-green-50 to-green-100 h-screen w-64 fixed top-0 left-0 flex flex-col justify-between shadow-lg border-r border-green-200">
+      <div className="flex justify-center pt-20 pb-8 border-b border-green-200">
       </div>
-      <div className="flex justify-center items-center mt-10 mr-5">
-        <img src={logo} alt="Logo" />
+
+      <div className="flex-grow overflow-y-auto px-4 py-6">
+        <nav>
+          {navItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`flex items-center rounded-lg mb-10 px-4 py-3 transition-all duration-200 ${
+                location.pathname === item.path
+                  ? 'bg-green-600 text-white shadow-md' 
+                  : 'text-green-800 hover:bg-green-500 hover:text-white'
+              }`}
+            >
+              <span className="mr-3">{item.icon}</span>
+              <span className="font-medium">{item.label}</span>
+              {location.pathname === item.path && (
+                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-white"></span>
+              )}
+            </Link>
+          ))}
+        </nav>
       </div>
-      <p className="text-gray-400 ml-10 mt-0">&copy; 2025 GreenGrow</p>
+
+      <div className="p-4 border-t border-green-200">
+        <p className="text-green-700 text-sm font-medium text-center">&copy; 2025 GreenGrow</p>
+      </div>
     </div>
   );
 }

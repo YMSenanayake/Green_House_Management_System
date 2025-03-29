@@ -9,6 +9,7 @@ import Loader from "../../components/header/Loader";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { Tag } from "antd";
+import Navbar from "../../components/header/Navbar";
 
 AOS.init({
   duration: 2500,
@@ -124,6 +125,7 @@ function Employeedashboard() {
 
   return (
     <div className="min-h-screen bg-gray-100">
+      <Navbar/>
       {loading ? (
         <Loader />
       ) : (
