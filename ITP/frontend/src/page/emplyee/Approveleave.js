@@ -1,43 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { 
-  Table, 
-  Tag, 
-  Button, 
-  Modal, 
-  Typography, 
-  Space, 
-  Tooltip, 
-  DatePicker, 
-  Select,
-  Dropdown,
-  Menu,
-  Input,
-  Card,
-  Divider,
-  Avatar,
-  Badge,
-  Statistic,
-  Row,
-  Col,
-  Empty
-} from "antd";
+  Table, Tag, Button, Modal, Typography, Space, Tooltip, DatePicker, Select,Dropdown,Menu,Input,Card,Divider,Avatar,Badge,Statistic,Row,Col,Empty} from "antd";
 import { 
-  CheckCircleOutlined, 
-  CloseCircleOutlined, 
-  EyeOutlined,
-  SearchOutlined,
-  SettingOutlined,
-  FilterOutlined,
-  CalendarOutlined,
-  ReloadOutlined,
-  UsergroupAddOutlined,
-  ClockCircleOutlined,
-  FileTextOutlined,
-  BellOutlined
+  CheckCircleOutlined, CloseCircleOutlined, EyeOutlined,SearchOutlined,SettingOutlined,FilterOutlined,CalendarOutlined,ReloadOutlined,UsergroupAddOutlined,ClockCircleOutlined,FileTextOutlined,BellOutlined
 } from "@ant-design/icons";
 import moment from "moment";
 import Swal from "sweetalert2";
+import Adminnavbar from "./component/Adminnavbar";
 
 const { Title, Text, Paragraph } = Typography;
 const { RangePicker } = DatePicker;
@@ -490,15 +460,18 @@ function Approveleave() {
     }
   ];
 
+
   // Return the component UI
   return (
     <div 
-      className="p-6 min-h-screen"
+      className="pl-10 ml-60 min-h-screen"
       style={{ 
         background: `linear-gradient(135deg, ${UI_COLORS.BACKGROUND} 0%, #ffffff 100%)`,
         color: UI_COLORS.TEXT
       }}
-    >
+      >     
+      <Adminnavbar/>
+
       <Card 
         className="shadow-lg rounded-xl"
         style={{ 
