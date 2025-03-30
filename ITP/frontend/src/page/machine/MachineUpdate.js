@@ -14,7 +14,7 @@ export function MachineUpdate(){
         try {
           setLoading(true)
           const data = await axios.get(
-            "http://localhost:5000/api/machines/getallmachines"
+            "http://localhost:3000/api/machines/getallmachines"
           );
           setMachine(data.data);
           setduplicateusers(data.data); // Update duplicateusers with fetched data

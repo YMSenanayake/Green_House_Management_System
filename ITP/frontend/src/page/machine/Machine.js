@@ -217,7 +217,7 @@ export default function Machine() {
     "Vehicle",
   ];
   return (
-    <div lassName="bg-wight-green">
+    <div className="bg-wight-green">
       {loading ? (
         <Loader />
       ) : (
@@ -254,7 +254,7 @@ export default function Machine() {
                           className="block mb-2 text-sm font-bold text-gray-700"
                           htmlFor="parts"
                         >
-                          Parts
+                          Cost
                         </label>
                         {cost.map((value, index) => (
                           <input
@@ -268,7 +268,7 @@ export default function Machine() {
                           />
                         ))}
                         <button
-                          className="px-4 py-2 font-bold text-white rounded bg-whatsapp-green hover:bg-blue-700 focus:outline-none focus:shadow-outline"
+                          className="px-4 py-2 font-bold text-black rounded bg-whatsapp-green hover:bg-blue-700 focus:outline-none focus:shadow-outline"
                           type="button"
                           onClick={() => addCostInput()}
                         >
@@ -396,7 +396,7 @@ export default function Machine() {
                       <div className="mt-8 mb-2">
                         <button
                           type="submit"
-                          className="text-white bg-dark hover:bg-darkhover block w-full focus:outline-none font-semibold rounded-md font-custom text-md px-5 py-2.5 text-center me-2 mb-2 dark:bg-dark dark:hover:bg-darkhover"
+                          className="text-black bg-dark hover:bg-darkhover block w-full focus:outline-none font-semibold rounded-md font-custom text-md px-5 py-2.5 text-center me-2 mb-2 dark:bg-dark dark:hover:bg-darkhover"
                         >
                           Submit
                         </button>
@@ -449,7 +449,7 @@ export default function Machine() {
                 <Link to="/m_MachinePdf">
                   <button
                     type="submit"
-                    class="text-white bg-whatsapp-green hover:bg-Buttongreen focus:outline-none focus:ring-4 focus:ring-Buttongreen font-medium rounded-full text-me px-5 py-2.5 text-center me-2 mb-2 dark:whatsapp-green dark:hover:bg-Buttongreen dark:focus:ring-Buttongreen font-sans shadow-xl max-w-md mx-auto"
+                    class="text-black bg-whatsapp-green hover:bg-Buttongreen focus:outline-none focus:ring-4 focus:ring-Buttongreen font-medium rounded-full text-me px-5 py-2.5 text-center me-2 mb-2 dark:whatsapp-green dark:hover:bg-Buttongreen dark:focus:ring-Buttongreen font-sans shadow-xl max-w-md mx-auto"
                   >
                     print machine details
                   </button>
@@ -461,7 +461,7 @@ export default function Machine() {
 
                 <button
                   type="submit"
-                  class="text-white bg-whatsapp-green hover:bg-Buttongreen focus:outline-none focus:ring-4 focus:ring-Buttongreen font-medium rounded-full text-me px-5 py-2.5 text-center me-2 mb-2 dark:whatsapp-green dark:hover:bg-Buttongreen dark:focus:ring-Buttongreen font-sans shadow-xl max-w-md mx-auto"
+                  class="text-black bg-whatsapp-green hover:bg-Buttongreen focus:outline-none focus:ring-4 focus:ring-Buttongreen font-medium rounded-full text-me px-5 py-2.5 text-center me-2 mb-2 dark:whatsapp-green dark:hover:bg-Buttongreen dark:focus:ring-Buttongreen font-sans shadow-xl max-w-md mx-auto"
                   onClick={openModal}
                 >
                   Click Here to Add a machine
