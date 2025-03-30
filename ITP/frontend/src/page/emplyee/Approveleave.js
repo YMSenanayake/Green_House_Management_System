@@ -8,6 +8,7 @@ import {
 import moment from "moment";
 import Swal from "sweetalert2";
 import Adminnavbar from "./component/Adminnavbar";
+import Navbar from "../../components/header/Navbar";
 
 const { Title, Text, Paragraph } = Typography;
 const { RangePicker } = DatePicker;
@@ -464,12 +465,13 @@ function Approveleave() {
   // Return the component UI
   return (
     <div 
-      className="pl-10 ml-60 min-h-screen"
-      style={{ 
-        background: `linear-gradient(135deg, ${UI_COLORS.BACKGROUND} 0%, #ffffff 100%)`,
-        color: UI_COLORS.TEXT
-      }}
-      >     
+    className="pl-10 ml-60 min-h-screen"
+    style={{ 
+      background: `linear-gradient(135deg, ${UI_COLORS.BACKGROUND} 0%, #ffffff 100%)`,
+      color: UI_COLORS.TEXT
+    }}
+    >     
+    <Navbar/>
       <Adminnavbar/>
 
       <Card 

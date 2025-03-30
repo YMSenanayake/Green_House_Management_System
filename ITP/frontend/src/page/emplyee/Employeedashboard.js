@@ -242,7 +242,7 @@ function Employeedashboard() {
                   {/* Pie Chart */}
                   <div className="flex justify-center items-center">
                     {data && (
-                      <div className="w-full max-w-xs">
+                      <div className="w-full max-full">
                         <Pie 
                           data={data} 
                           options={{
