@@ -192,118 +192,293 @@ function Allusers() {
 
   // Generate PDF report
   const generateReport = () => {
+    // Get current user or use fallback
+    const currentUser = window.currentUser || 
+      JSON.parse(localStorage.getItem('currentUser') || 'null') || 
+      { fullName: 'System User' };
+  
+    // Check for data availability
     if (!users || users.length === 0) {
       Swal.fire({
         icon: "info",
-        title: "No Data",
-        text: "There are no users to generate a report",
-        confirmButtonColor: "#25D366",
+        title: "No Data Available",
+        text: "There are no users available to generate a report.",
+        confirmButtonColor: "#25D366"
       });
       return;
     }
-  
+    
+    // Confirm report generation
     Swal.fire({
       title: "Generate Users Report",
-      text: "Do you want to create a PDF report of all users?",
+      html: "Do you want to create a <b>PDF report</b> containing all user data?",
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#25D366",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Generate",
-      cancelButtonText: "Cancel",
+      confirmButtonText: "<i class='fas fa-file-pdf'></i> Generate Report"
     }).then((result) => {
       if (result.isConfirmed) {
-        try {
-          const doc = new jsPDF("p", "mm", "a4");
-          const pageWidth = doc.internal.pageSize.getWidth();
-          const pageHeight = doc.internal.pageSize.getHeight();
-  
-          const colors = {
-            primary: [37, 211, 102], // #25D366 in RGB
-            secondary: [240, 249, 245], // #F0F9F5 in RGB
-            text: [0, 0, 0],
-            background: [250, 250, 250],
-          };
-  
-          // Add header
-          const addHeader = () => {
-            doc.addImage(logo, "png", 15, 10, 40, 15);
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(16);
-            doc.setTextColor(...colors.text);
-            doc.text("GreenGrow User Management Report", pageWidth / 2, 25, { align: "center" });
-  
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(10);
-            doc.text(`Generated: ${new Date().toLocaleString()}`, pageWidth - 20, 20, { align: "right" });
-          };
-  
-          // Add footer
-          const addFooter = (pageNum, totalPages) => {
-            doc.setFillColor(...colors.primary);
-            doc.rect(0, pageHeight - 15, pageWidth, 15, "F");
-  
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(9);
-            doc.text(`Page ${pageNum} of ${totalPages}`, pageWidth / 2, pageHeight - 5, { align: "center" });
-            doc.text("© " + new Date().getFullYear() + " GreenGrow", 15, pageHeight - 5);
-            doc.text("Confidential", pageWidth - 15, pageHeight - 5, { align: "right" });
-          };
-  
-          // Table Data
-          const headers = ["Name", "Email", "Phone", "Role"];
-          const tableData = users.map((user) => [
-            user.fullName || "N/A",
-            user.email || "N/A",
-            user.phone || "N/A",
-            user.role || "N/A",
-          ]);
-  
-          // Generate Table
-          autoTable(doc, {
-            head: [headers],
-            body: tableData,
-            startY: 40,
-            theme: "striped",
-            headStyles: {
-              fillColor: colors.primary,
-              textColor: [255, 255, 255],
-              fontSize: 11,
-              fontStyle: "bold",
-            },
-            bodyStyles: {
-              textColor: colors.text,
-              fontSize: 10,
-            },
-            alternateRowStyles: {
-              fillColor: colors.background,
-            },
-            columnStyles: {
-              0: { cellWidth: 45 },
-              1: { cellWidth: 55 },
-              2: { cellWidth: 40 },
-              3: { cellWidth: 40 },
-            },
-            didDrawPage: (data) => {
-              addHeader();
-              addFooter(doc.internal.getNumberOfPages(), doc.internal.getNumberOfPages());
-            },
-          });
-  
-          // Save PDF
-          const timestamp = new Date().toISOString().replace(/[:T]/g, "-").split(".")[0];
-          const filename = `GreenGrow_Users_Report_${timestamp}.pdf`;
-          doc.save(filename);
-  
-          toast.success(`Report saved as ${filename}`);
-        } catch (error) {
-          console.error("PDF Generation Error:", error);
-          toast.error("Failed to generate PDF report");
-        }
+        // Show loading state
+        Swal.fire({
+          title: "Generating Report",
+          html: "<div class='progress-container'><div class='progress-bar'></div></div>",
+          allowOutsideClick: false,
+          didOpen: () => Swal.showLoading()
+        });
+        
+        setTimeout(() => {
+          try {
+            // Initialize PDF document
+            const doc = new jsPDF("p", "mm", "a4");
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const pageHeight = doc.internal.pageSize.getHeight();
+            
+            // Define color scheme
+            const colors = {
+              primary: [37, 211, 102],
+              secondary: [240, 249, 245],
+              text: [51, 51, 51]
+            };
+            
+            // Calculate pagination
+            const rowsPerPage = 25;
+            const totalPages = Math.ceil(users.length / rowsPerPage) || 1;
+            
+            // Add header function
+            const addHeader = () => {
+              // Header background
+              doc.setFillColor(...colors.primary, 0.1);
+              doc.rect(0, 0, pageWidth, 35, 'F');
+              
+              // Add logo and title
+              doc.addImage(logo, "png", 15, 10, 25, 15);
+              
+              doc.setFont("helvetica", "bold");
+              doc.setFontSize(18);
+              doc.setTextColor(...colors.text);
+              doc.text("GreenGrow User Management Report", pageWidth / 2, 22, { align: "center" });
+              
+              // Add metadata
+              doc.setFont("helvetica", "normal");
+              doc.setFontSize(9);
+              doc.setTextColor(100, 100, 100);
+              doc.text(`Generated: ${new Date().toLocaleString()}`, pageWidth - 20, 15, { align: "right" });
+              doc.text(`Total Users: ${users.length}`, pageWidth - 20, 20, { align: "right" });
+              doc.text(`Generated by: ${currentUser.fullName}`, pageWidth - 20, 25, { align: "right" });
+            };
+            
+            // Add footer function
+            const addFooter = (pageNum) => {
+              doc.setFillColor(...colors.primary);
+              doc.rect(0, pageHeight - 15, pageWidth, 15, "F");
+              
+              doc.setTextColor(255, 255, 255);
+              doc.setFontSize(9);
+              doc.text(`Page ${pageNum} of ${totalPages}`, pageWidth / 2, pageHeight - 5, { align: "center" });
+              doc.text("© " + new Date().getFullYear() + " GreenGrow", 15, pageHeight - 5);
+              doc.text("Confidential", pageWidth - 15, pageHeight - 5, { align: "right" });
+            };
+            
+            // Add summary section
+            const addSummary = (y) => {
+              // Calculate role distribution and active users
+              const roles = {};
+              let activeUsers = 0;
+              let inactiveUsers = 0;
+              
+              users.forEach(user => {
+                const role = user.role || "Unassigned";
+                roles[role] = (roles[role] || 0) + 1;
+                if (typeof user.isActive !== 'undefined') {
+                  user.isActive ? activeUsers++ : inactiveUsers++;
+                }
+              });
+              
+              // Draw summary container
+              doc.setFillColor(...colors.secondary);
+              doc.roundedRect(15, y, pageWidth - 30, 35, 3, 3, 'F');
+              
+              // Summary header
+              doc.setFillColor(...colors.primary);
+              doc.roundedRect(15, y, pageWidth - 30, 8, 3, 3, 'F');
+              doc.setFont("helvetica", "bold");
+              doc.setFontSize(12);
+              doc.setTextColor(255, 255, 255);
+              doc.text("DASHBOARD SUMMARY", pageWidth / 2, y + 5.5, { align: "center" });
+              
+              // Two-column layout
+              const col1X = 25;
+              const col2X = pageWidth / 2 + 10;
+              
+              // User statistics - left column
+              doc.setFont("helvetica", "bold");
+              doc.setFontSize(10);
+              doc.setTextColor(...colors.primary);
+              doc.text("User Statistics:", col1X, y + 15);
+              
+              doc.setFont("helvetica", "normal");
+              doc.setFontSize(9);
+              doc.setTextColor(80, 80, 80);
+              doc.text(`Total Users: ${users.length}`, col1X, y + 21);
+              doc.text(`Active Users: ${activeUsers} (${Math.round(activeUsers/users.length*100)}%)`, col1X, y + 26);
+              doc.text(`Inactive Users: ${inactiveUsers} (${Math.round(inactiveUsers/users.length*100)}%)`, col1X, y + 31);
+              
+              // Role distribution - right column
+              doc.setFont("helvetica", "bold");
+              doc.setFontSize(10);
+              doc.setTextColor(...colors.primary);
+              doc.text("Role Distribution:", col2X, y + 15);
+              
+              doc.setFont("helvetica", "normal");
+              doc.setFontSize(9);
+              doc.setTextColor(80, 80, 80);
+              
+              let roleY = y + 21;
+              Object.entries(roles).forEach(([role, count]) => {
+                const percentage = Math.round((count / users.length) * 100);
+                doc.text(`${role}: ${count} (${percentage}%)`, col2X, roleY);
+                roleY += 5;
+              });
+              
+              return y + 40;
+            };
+            
+            // Table data setup
+            const headers = ["Full Name", "Email Address", "Phone", "Role", "Status"];
+            const tableData = users.map((user) => [
+              user.fullName || "—",
+              user.email || "—",
+              user.phone || "—",
+              user.role || "—",
+              user.isActive === false ? "Inactive" : "Active"
+            ]);
+            
+            // Generate table with styling
+            autoTable(doc, {
+              head: [headers],
+              body: tableData,
+              startY: 80,
+              theme: "grid",
+              headStyles: {
+                fillColor: colors.primary,
+                textColor: [255, 255, 255],
+                fontSize: 10,
+                fontStyle: "bold",
+                halign: 'center'
+              },
+              bodyStyles: {
+                textColor: colors.text,
+                fontSize: 9
+              },
+              alternateRowStyles: {
+                fillColor: colors.secondary
+              },
+              columnStyles: {
+                0: { cellWidth: 40 },
+                1: { cellWidth: 50 },
+                2: { cellWidth: 30 },
+                3: { cellWidth: 25, halign: 'center' },
+                4: { cellWidth: 25, halign: 'center' }
+              },
+              margin: { top: 40, right: 15, bottom: 25, left: 15 },
+              didDrawPage: (data) => {
+                addHeader();
+                addFooter(doc.internal.getNumberOfPages());
+                
+                // Only add summary on first page
+                if (data.pageNumber === 1) {
+                  addSummary(40);
+                }
+              },
+              didDrawCell: (data) => {
+                // Style status cells
+                if (data.section === 'body' && data.column.index === 4) {
+                  const status = data.cell.text[0];
+                  if (status === 'Inactive') {
+                    doc.setFillColor(250, 230, 230);
+                    doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
+                    doc.setTextColor(220, 53, 69);
+                    doc.text(status, data.cell.x + data.cell.width / 2, data.cell.y + data.cell.height / 2, {
+                      align: 'center',
+                      baseline: 'middle'
+                    });
+                  } else if (status === 'Active') {
+                    doc.setFillColor(230, 250, 230);
+                    doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
+                    doc.setTextColor(...colors.primary);
+                    doc.text(status, data.cell.x + data.cell.width / 2, data.cell.y + data.cell.height / 2, {
+                      align: 'center',
+                      baseline: 'middle'
+                    });
+                  }
+                }
+              }
+            });
+            
+            // Save PDF with timestamp in filename
+            const timestamp = new Date().toISOString().replace(/[:T]/g, "-").split(".")[0];
+            const filename = `GreenGrow_Users_Report_${timestamp}.pdf`;
+            doc.save(filename);
+            
+            // Success message
+            Swal.fire({
+              icon: "success",
+              title: "Report Generated Successfully!",
+              html: `<p>Your report has been saved as: <b>${filename}</b></p>`,
+              confirmButtonColor: "#25D366"
+            });
+            
+            console.log(`User report generated: ${filename} by ${currentUser.fullName}`);
+            
+          } catch (error) {
+            console.error("PDF Generation Error:", error);
+            
+            // Error handling
+            Swal.fire({
+              icon: "error",
+              title: "Report Generation Failed",
+              text: `Error: ${error.message || "Unknown error"}`,
+              confirmButtonColor: "#25D366",
+              confirmButtonText: "Try Again",
+              showCancelButton: true
+            }).then((result) => {
+              if (result.isConfirmed) {
+                setTimeout(() => generateReport(), 500);
+              }
+            });
+          }
+        }, 1000);
       }
     });
+    
+    // Add CSS for progress bar
+    if (!document.getElementById('report-styles')) {
+      const style = document.createElement('style');
+      style.id = 'report-styles';
+      style.innerHTML = `
+        .progress-container {
+          margin-top: 15px;
+          width: 100%;
+          background-color: #f0f0f0;
+          border-radius: 4px;
+          overflow: hidden;
+        }
+        .progress-bar {
+          height: 6px;
+          background-color: #25D366;
+          width: 0%;
+          animation: progress 1.5s ease-in-out forwards;
+        }
+        @keyframes progress {
+          0% { width: 0%; }
+          90% { width: 95%; }
+          100% { width: 95%; }
+        }
+      `;
+      document.head.appendChild(style);
+    }
   };
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar/>

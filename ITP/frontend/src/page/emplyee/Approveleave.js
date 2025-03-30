@@ -167,9 +167,9 @@ function Approveleave() {
 
   // Calculate leave duration in days
   const calculateDuration = (fromDate, toDate) => {
-    const from = moment(fromDate);
-    const to = moment(toDate);
-    return to.diff(from, 'days') + 1; // Include both start and end dates
+    const from = moment(fromDate).startOf('day');
+    const to = moment(toDate).startOf('day');
+    return to.diff(from, 'days') + 1; // +1 to include both start and end dates
   };
 
   // Leave Request Status Update Methods
@@ -244,7 +244,7 @@ function Approveleave() {
         <div style="text-align: left;">
           <p><strong>Employee:</strong> ${usersMap[record.userid]}</p>
           <p><strong>Duration:</strong> ${duration} day${duration !== 1 ? 's' : ''}</p>
-          <p><strong>Dates:</strong> ${moment(record.fromdate).format('DD MMM YYYY')} to ${moment(record.todate).format('DD MMM YYYY')}</p>
+          <p><strong>Dates:</strong> ${moment(record.fromdate).format('DD MM YYYY')} to ${moment(record.todate).format('DD MM YYYY')}</p>
           <p><strong>Reason:</strong> ${record.description}</p>
         </div>
       `,
@@ -334,7 +334,7 @@ function Approveleave() {
     
     // If same month and year
     if (start.isSame(end, 'month') && start.isSame(end, 'year')) {
-      return `${start.format('DD')} - ${end.format('DD MMM YYYY')} (${duration} days)`;
+      return `${start.format('DD MMM YYYY')} - ${end.format('DD MMM YYYY')} (${duration} days)`;
     }
     
     // Otherwise full format
@@ -669,7 +669,7 @@ function Approveleave() {
               }}
               onChange={(dates) => setDateRange(dates)}
               value={dateRange}
-              format="DD/MM/YYYY"
+              format="MM/DD/YYYY"
               placeholder={['Start date', 'End date']}
               ranges={{
                 'Today': [moment(), moment()],

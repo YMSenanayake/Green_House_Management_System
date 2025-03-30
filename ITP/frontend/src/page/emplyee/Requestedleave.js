@@ -83,8 +83,8 @@ function Requestedleave() {
     const currentUser = JSON.parse(localStorage.getItem("currentuser"));
     const requestDetails = {
       userid: currentUser._id,
-      fromdate: fromdate.format("DD-MM-YYYY"),
-      todate: todate.format("DD-MM-YYYY"),
+      fromdate: fromdate.format("DD-MMM-YYYY"),
+      todate: todate.format("DD-MMM-YYYY"),
       description: description.trim(),
     };
 
@@ -185,7 +185,7 @@ function Requestedleave() {
         Select Date Range
       </label>
       <RangePicker
-        format="DD-MM-YYYY"
+        format="DD-MMM-YYYY"
         onChange={filterByDate}
         value={[fromdate, todate]}
         className="w-full rounded-2xl border-green-300 hover:border-green-500 transition-colors"
