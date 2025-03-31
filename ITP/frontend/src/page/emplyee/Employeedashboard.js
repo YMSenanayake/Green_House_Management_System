@@ -9,7 +9,6 @@ import Loader from "../../components/header/Loader";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { Tag } from "antd";
-import Navbar from "../../components/header/Navbar";
 
 AOS.init({
   duration: 1500, // Reduced duration for smoother animations
@@ -106,24 +105,32 @@ function Employeedashboard() {
     fetchData();
   }, []);
 
-  // Enhanced color palette with professional and visually distinct colors
+  // Enhanced professional color palette with better contrast and visual appeal
   const ROLE_COLORS = {
-    employee: "#4f46e5", // Indigo
-    courier: "#7c3aed", // Violet
-    user: "#db2777", // Pink
-    financial: "#ea580c", // Orange
-    inventory: "#059669", // Emerald
-    machine: "#0891b2", // Cyan
+    employee: "#4338ca", // Deep indigo
+    courier: "#6d28d9", // Rich purple
+    user: "#be185d", // Deep pink
+    financial: "#c2410c", // Burnt orange
+    inventory: "#047857", // Deep emerald
+    machine: "#0e7490", // Deep cyan
+    admin: "#1e40af", // Royal blue
+    manager: "#b45309", // Amber
+    hr: "#9d174d", // Deep rose
+    it: "#4338ca", // Deep indigo
   };
 
-  // Hover colors (slightly lighter)
+  // Refined hover colors with better contrast
   const ROLE_HOVER_COLORS = {
-    employee: "#6366f1", // Lighter Indigo
-    financial: "#f97316", // Lighter Orange
-    inventory: "#10b981", // Lighter Emerald
-    machine: "#06b6d4", // Lighter Cyan
-    tunnel: "#22d3ee", // Lighter Cyan
-    user: "#ec4899", // Pink
+    employee: "#4f46e5", // Brighter indigo
+    courier: "#7c3aed", // Brighter purple
+    user: "#db2777", // Brighter pink
+    financial: "#ea580c", // Brighter orange
+    inventory: "#059669", // Brighter emerald
+    machine: "#0891b2", // Brighter cyan
+    admin: "#2563eb", // Brighter blue
+    manager: "#d97706", // Brighter amber
+    hr: "#be185d", // Brighter rose
+    it: "#4f46e5", // Brighter indigo
   };
 
   // Status colors
@@ -133,18 +140,18 @@ function Employeedashboard() {
     disapproved: "#ef4444", // Red
   };
 
-  // Fallback colors for roles not in the predefined list
+  // Professional fallback colors with better contrast
   const FALLBACK_COLORS = [
-    "#6366f1", // Indigo
-    "#c026d3", // Purple
-    "#15803d", // Green
-    "#b91c1c", // Red
-    "#0369a1", // Blue
-    "#854d0e", // Yellow
-    "#1e3a8a", // Dark Blue
-    "#0f766e", // Teal
-    "#831843", // Pink
-    "#7e22ce", // Violet
+    "#4338ca", // Deep indigo
+    "#7e22ce", // Deep purple
+    "#be185d", // Deep pink
+    "#b91c1c", // Deep red
+    "#0369a1", // Deep blue
+    "#b45309", // Deep amber
+    "#15803d", // Deep green
+    "#0f766e", // Deep teal
+    "#6d28d9", // Deep violet
+    "#0e7490", // Deep cyan
   ];
 
   // Generate a color for a role, using predefined if available, or from fallback array if not
@@ -184,7 +191,7 @@ function Employeedashboard() {
     const diffDays = Math.round((endUTC - startUTC) / (1000 * 60 * 60 * 24));
 
     return diffDays + (diffDays === 1 ? " day" : " days");
-};
+  };
 
   // Handle leave request refresh
   const handleRefreshLeaves = async () => {
@@ -204,6 +211,8 @@ function Employeedashboard() {
             hoverBackgroundColor: roles.map((role, index) => getColorForRole(role, index, true)),
             borderColor: "white",
             borderWidth: 2,
+            borderRadius: 6, // Rounded pie segments
+            hoverOffset: 10, // Larger hover effect
           },
         ],
       });
@@ -244,13 +253,15 @@ function Employeedashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
+    <div>
+
+    </div>
+      <Adminnavbar />
       {loading ? (
         <Loader />
       ) : (
         <div className="container mx-auto px-4 py-8">
           <div className="flex">
-            <Adminnavbar />
             <div className="flex-grow ml-64 space-y-6">
               {/* Dashboard Header */}
               <div className="flex justify-between items-center mb-2">
@@ -488,7 +499,7 @@ function Employeedashboard() {
                   </div>
                   
                     <div className="grid grid-cols-2 gap-8">
-                        {/* Pie Chart */}
+                        {/* Enhanced Pie Chart */}
                         <div className="flex justify-center items-center bg-gray-50 rounded-xl p-6 shadow-inner">
                           {data ? (
                             <div className="w-full h-full flex justify-center items-center" data-aos="zoom-in">
@@ -501,26 +512,35 @@ function Employeedashboard() {
                                     legend: {
                                       position: 'bottom',
                                       labels: {
-                                        boxWidth: 12,
-                                        usePointStyle: true,
+                                        boxWidth: 15,
                                         padding: 20,
+                                        usePointStyle: true,
+                                        pointStyle: 'circle',
                                         font: {
-                                          size: 11,
-                                          weight: 'bold'
+                                          size: 12,
+                                          weight: 'bold',
+                                          family: "'Inter', sans-serif"
                                         }
                                       }
                                     },
                                     tooltip: {
-                                      backgroundColor: 'rgba(17, 24, 39, 0.8)',
-                                      padding: 12,
+                                      backgroundColor: 'rgba(15, 23, 42, 0.8)',
+                                      titleColor: '#ffffff',
+                                      bodyColor: '#ffffff',
+                                      padding: 16,
+                                      cornerRadius: 8,
+                                      boxPadding: 6,
                                       titleFont: {
                                         size: 14,
-                                        weight: 'bold'
+                                        weight: 'bold',
+                                        family: "'Inter', sans-serif"
                                       },
                                       bodyFont: {
-                                        size: 13
+                                        size: 13,
+                                        family: "'Inter', sans-serif"
                                       },
                                       displayColors: true,
+                                      usePointStyle: true,
                                       callbacks: {
                                         label: function(context) {
                                           const label = context.label || '';
@@ -532,12 +552,18 @@ function Employeedashboard() {
                                       }
                                     }
                                   },
-                                  cutout: '0%',
-                                  radius: '100%',
+                                  elements: {
+                                    arc: {
+                                      borderWidth: 2,
+                                      borderColor: '#ffffff'
+                                    }
+                                  },
+                                  cutout: '0%', // Standard pie chart (no hole)
+                                  radius: '90%', // Slightly smaller to fit better
                                   animation: {
                                     animateScale: true,
                                     animateRotate: true,
-                                    duration: 1500,
+                                    duration: 2000,
                                     easing: 'easeOutQuart'
                                   }
                                 }} 

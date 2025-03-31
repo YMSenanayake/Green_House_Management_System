@@ -4,11 +4,21 @@ import { LuLayoutDashboard } from "react-icons/lu";
 import { GiExitDoor } from "react-icons/gi";
 import { FaUsers } from "react-icons/fa";
 import { FaUserClock } from "react-icons/fa6";
+import { FaUserCircle } from "react-icons/fa";
 
 import logo from "../../../Images/logo.png";
 
 function Adminnavbar() {
   const location = useLocation();
+  
+  const user = JSON.parse(localStorage.getItem("currentuser"));
+
+  function Logout() {
+    localStorage.removeItem("currentuser");
+    localStorage.removeItem("user:detail");
+    window.location.href = "/";
+  }
+
   
   const navItems = [
     {
@@ -35,7 +45,14 @@ function Adminnavbar() {
   
   return (
     <div className="bg-gradient-to-b from-green-50 to-green-100 h-screen w-64 fixed top-0 left-0 flex flex-col justify-between shadow-lg border-r border-green-200">
-      <div className="flex justify-center pt-20 pb-8 border-b border-green-200">
+      <div className="flex flex-col items-center pt-8 pb-8 border-b border-green-200">
+        {/* Profile button - circular */}
+        <Link to={`/u_userprofile/${user._id}`} className="mb-4">
+          <div className="w-16 h-16 rounded-full bg-green-600 flex items-center justify-center text-white shadow-md hover:bg-green-700 transition-all duration-200">
+            <FaUserCircle className="text-3xl" />
+          </div>
+        </Link>
+        <span className="text-green-800 font-medium">My Profile</span>
       </div>
 
       <div className="flex-grow overflow-y-auto px-4 py-6">

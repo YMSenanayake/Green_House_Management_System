@@ -13,7 +13,6 @@ import autoTable from 'jspdf-autotable';
 import { useNavigate } from "react-router-dom";
 import logo from "../../components/header/logo.png";
 import Adminnavbar from "./component/Adminnavbar";
-import Navbar from "../../components/header/Navbar";
 
 AOS.init({
   duration: 1500,
@@ -481,7 +480,6 @@ function Allusers() {
   };
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar/>
       <Adminnavbar />
       
       <div className="ml-64 p-6">

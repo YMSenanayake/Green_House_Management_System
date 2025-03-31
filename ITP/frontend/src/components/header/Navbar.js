@@ -59,7 +59,6 @@ function Navbar() {
                             <Link
                             to={`/u_userprofile/${user._id}`}>
                             <button
-                             
                               class="flex justify-center gap-3 rounded-md py-2 px-3 hover:text-white hover:bg-whatsapp-green no-underline"
                             >
                               <svg

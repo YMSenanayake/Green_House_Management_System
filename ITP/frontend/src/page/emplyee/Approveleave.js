@@ -8,7 +8,6 @@ import {
 import moment from "moment";
 import Swal from "sweetalert2";
 import Adminnavbar from "./component/Adminnavbar";
-import Navbar from "../../components/header/Navbar";
 
 const { Title, Text, Paragraph } = Typography;
 const { RangePicker } = DatePicker;
@@ -471,7 +470,6 @@ function Approveleave() {
       color: UI_COLORS.TEXT
     }}
     >     
-    <Navbar/>
       <Adminnavbar/>
 
       <Card 
