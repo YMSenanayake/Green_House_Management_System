@@ -125,13 +125,18 @@ function RegisterForm() {
             </div>
 
             <input
-              type="text"
-              className="w-full px-4 py-3 bg-white/20 text-white placeholder-white/70 rounded-lg outline-none focus:ring-2 focus:ring-white"
-              placeholder="Full Name"
-              value={fullName}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
+                type="text"
+                className="w-full px-4 py-3 bg-white/20 text-white placeholder-white/70 rounded-lg outline-none focus:ring-2 focus:ring-white"
+                placeholder="Full Name"
+                value={fullName}
+                onChange={(e) => {
+                  const regex = /^[a-zA-Z\s]*$/; // Allows only letters and spaces
+                  if (regex.test(e.target.value)) {
+                    setName(e.target.value);
+                  }
+                }}
+                required
+              />
 
             <input
               type="email"
@@ -147,9 +152,16 @@ function RegisterForm() {
               className="w-full px-4 py-3 bg-white/20 text-white placeholder-white/70 rounded-lg outline-none focus:ring-2 focus:ring-white"
               placeholder="Phone Number"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
+                if (value.length <= 10) {
+                  setPhone(value);
+                }
+              }}
+              maxLength="10"
               required
             />
+
 
             <input
               type="password"

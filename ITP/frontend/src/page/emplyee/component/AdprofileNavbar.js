@@ -4,9 +4,6 @@ import { LuLayoutDashboard } from "react-icons/lu";
 import { GiExitDoor } from "react-icons/gi";
 import { CgProfile } from "react-icons/cg";
 import { FaArrowCircleLeft } from "react-icons/fa";
-import Navbar from "../../../components/header/Navbar";
-
-import logo from "./../../../components/header/logo.png";
 
 function AdprofileNavbar() {
   const location = useLocation();
@@ -21,7 +18,6 @@ function AdprofileNavbar() {
       <div className="p-4">
         <div className="mr-12">
           <div className="flex justify-center items-center mt-4">
-            <Navbar />
           </div>
         </div>
 
@@ -60,9 +56,6 @@ function AdprofileNavbar() {
         </Link>
       </div>
       <div className="p-4">
-        <div className="flex justify-center items-center  mr-5">
-          <img src={logo} alt="Logo" />
-        </div>
         <p className="text-gray-400 ml-7 py-4">&copy; 2025 PolyCrop </p>
       </div>
     </div>

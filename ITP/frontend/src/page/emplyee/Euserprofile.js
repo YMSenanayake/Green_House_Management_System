@@ -1,27 +1,23 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import AdprofileNavbar from "./component/AdprofileNavbar";
-import { FaEdit } from "react-icons/fa";
+import { FaEdit, FaEye, FaEyeSlash, FaIdCard, FaEnvelope, FaPhone, FaUserTag } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import Loader from "../../components/header/Loader";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
-
-
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import AOS from "aos";
 import "aos/dist/aos.css";
 
 AOS.init({
-  duration: 2000,
+  duration: 1000,
 });
 
 function Euserprofile() {
   const user = JSON.parse(localStorage.getItem("currentuser"));
   const { empid } = useParams("");
-  const [loading, setLoading] = useState(false); // Define loading state variable here
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const [id, setid] = useState("");
@@ -32,7 +28,6 @@ function Euserprofile() {
   const [imageurl, setimageurl] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  //get user details
   useEffect(() => {
     async function getUser() {
       try {
@@ -51,41 +46,57 @@ function Euserprofile() {
       } catch (error) {
         setLoading(false);
         console.log(error);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to load profile data. Please try again later."
+        });
       }
     }
     getUser();
-  }, []);
+  }, [empid]);
 
   const deleteuser = async (id) => {
     try {
-      setLoading(true);
       const confirmed = await Swal.fire({
-        title: "Are you sure delete account?",
-        text: "You won't be able to revert this!",
+        title: "Delete Account?",
+        text: "This action cannot be undone. All your data will be permanently removed.",
         icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
+        confirmButtonColor: "#EF4444",
+        cancelButtonColor: "#6B7280",
+        confirmButtonText: "Yes, delete account",
+        cancelButtonText: "Cancel",
+        footer: "<span class='text-sm text-gray-500'>You will be logged out immediately</span>"
       });
 
       if (confirmed.isConfirmed) {
+        setLoading(true);
         await axios.delete(`http://localhost:3000/api/users/delete/${id}`);
-        fetchData(); // Reload data after successful deletion
+        setLoading(false);
+        
         Swal.fire({
           icon: "success",
-          title: "Success",
-          text: "Your account deleted successfully!",
+          title: "Account Deleted",
+          text: "Your account has been successfully deleted.",
+          timer: 2000,
+          showConfirmButton: false
         });
-        navigate("/login"); // Navigate to login page after successful deletion
-
+        
+        // Brief timeout to allow the user to see the success message
+        setTimeout(() => {
+          localStorage.removeItem("currentuser");
+          navigate("/");
+        }, 2000);
       }
-      
-      setLoading(false);
     } catch (error) {
-      console.log(error);
-    } finally {
       setLoading(false);
+      console.log(error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to delete account. Please try again later."
+      });
     }
   };
 
@@ -95,7 +106,7 @@ function Euserprofile() {
 
   const fetchData = async () => {
     if (!user) {
-      window.location.href = "/login";
+      navigate("/login");
     }
   };
 
@@ -103,152 +114,114 @@ function Euserprofile() {
     fetchData();
   }, []);
 
+  // Information card component for better organization
+  const InfoField = ({ icon: Icon, label, value }) => (
+    <div className="mb-5">
+      <label className="mb-3 block text-base font-medium text-gray-700">
+        {label}
+      </label>
+      <div className="flex items-center w-full rounded-md border border-gray-200 bg-white py-3 px-4 text-gray-700">
+        <Icon className="mr-3 text-gray-500" />
+        <input
+          className="w-full bg-white outline-none border-none focus:ring-0"
+          value={value}
+          readOnly
+        />
+      </div>
+    </div>
+  );
+
   return (
-    <div>
+    <div className="bg-gray-50 min-h-screen">
       {loading ? (
         <Loader />
       ) : (
-        <>
-          <div className="bg-wight-green">
-            <div className="flex">
-              <AdprofileNavbar />
-              <div className="flex flex-col w-full" style={{ zIndex: 900 }}>
-                <div data-aos="zoom in" className="ml-10">
-                  <div class="  relative    xl:max-w-3xl  md:mx-auto    mt-10 bg-wight-green shadow-xl rounded-lg text-gray-900">
-                    <div class="rounded-t-lg h-32 overflow-hidden">
+        <div className="flex">
+          <AdprofileNavbar />
+          <div className="flex flex-col w-full p-6">
+            <div className="max-w-3xl mx-auto w-full" data-aos="fade-up">
+              <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+                {/* Profile header with background */}
+                <div className="relative">
+                  <div className="h-40 overflow-hidden">
+                    <img
+                      className="w-full object-cover object-center"
+                      src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fHByb2ZpbGUlMjBiYWNrZ3JvdW5kfGVufDB8fDB8fHww&auto=format&fit=crop&w=900&q=60"
+                      alt="Profile background"
+                    />
+                  </div>
+                  
+                  {/* Profile image */}
+                  <div className="absolute left-1/2 transform -translate-x-1/2 -bottom-16">
+                    <div className="w-32 h-32 relative border-4 border-white rounded-full overflow-hidden shadow-md">
                       <img
-                        class="object-cover object-top w-full"
-                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX8YL6SsBZOPNhDicskCaz23ne66gswvopcTClAwkLBTm16E-5MUnTUWYXpKSzwm49U10&usqp=CAU"
-                        alt="Logo"
+                        className="object-cover object-center h-full w-full"
+                        src={user.imageurl || "https://via.placeholder.com/150"}
+                        alt={`${user.name}'s profile`}
                       />
                     </div>
-                    <div class="mx-auto w-32 h-32 relative -mt-16 border-4 border-white rounded-full overflow-hidden">
-                      <img
-                        class="object-cover object-center h-32 "
-                        src={user.imageurl}
-                        alt="Woman looking front"
-                      />
-                    </div>
-                    <div class="text-center mt-2">
-                      <h2 class="font-semibold">{user.name}</h2>
-                      <p class="text-gray-500">{user.role}</p>
-                    </div>
-                    <ul class="py-4 mt-2 text-gray-700 flex items-center justify-around">
-                      <li className="flex flex-col items-center justify-around">
-                        <Link to={`/e_editprofile/${user._id}`}>
-                          <button className="btn1 mr-3">
-                            <FaEdit className="mr-5 text-3xl transition-transform duration-300 ease-in-out transform hover:scale-110" />
+                  </div>
+                </div>
+                
+                {/* Profile actions */}
+                <div className="mt-20 text-center px-6">
+                  <h2 className="text-2xl font-bold text-gray-800">{user.name}</h2>
+                  <p className="text-gray-600 font-medium mt-1">{user.role}</p>
+                  
+                  <div className="flex justify-center mt-4 space-x-4">
+                    <Link 
+                      to={`/e_editprofile/${user._id}`}
+                      className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors duration-300"
+                    >
+                      <FaEdit className="mr-2" />
+                      Edit Profile
+                    </Link>
+                    
+                    <button
+                      onClick={() => deleteuser(user._id)}
+                      className="inline-flex items-center px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors duration-300"
+                    >
+                      <MdDeleteForever className="mr-2" />
+                      Delete Account
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Profile information */}
+                <div className="p-6 mt-4">
+                  <div className="bg-gray-50 p-5 rounded-lg">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">
+                      Personal Information
+                    </h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <InfoField icon={FaIdCard} label="Full Name" value={name} />
+                      <InfoField icon={FaEnvelope} label="Email Address" value={email} />
+                      <InfoField icon={FaPhone} label="Phone Number" value={phone} />
+                      <InfoField icon={FaUserTag} label="Role" value={user.role} />
+                      
+                      <div className="mb-5 md:col-span-2">
+                        <label className="mb-3 block text-base font-medium text-gray-700">
+                          Password
+                        </label>
+                        <div className="relative flex items-center w-full rounded-md border border-gray-200 bg-white py-3 px-4">
+                          <input
+                            type={showPassword ? "text" : "password"}
+                            className="w-full bg-white outline-none border-none focus:ring-0"
+                            value={password}
+                            readOnly
+                          />
+                          <button
+                            type="button"
+                            onClick={togglePasswordVisibility}
+                            className="text-gray-500 hover:text-gray-700 focus:outline-none transition-colors duration-200"
+                          >
+                            {showPassword ? (
+                              <FaEyeSlash className="text-lg" />
+                            ) : (
+                              <FaEye className="text-lg" />
+                            )}
                           </button>
-                        </Link>
-                      </li>
-
-                      <li class="flex flex-col items-center justify-around">
-                        <button
-                          className="btn1 mr-3"
-                          onClick={() => deleteuser(user._id)}
-                        >
-                          <MdDeleteForever className="mr-5 text-3xl transition-transform duration-300 ease-in-out transform hover:scale-110 text-red-500" />
-                        </button>
-                      </li>
-                    </ul>
-                    <div class="p-4 border-t  mx-8 mt-2 mb-4">
-                      <div class="flex items-center justify-center p-12">
-                        <div class="mx-auto w-full max-w-[550px] bg-wight-green">
-                          <form>
-                            <div class="mb-5">
-                              <label
-                                for="name"
-                                class="mb-3 block text-base font-medium text-[#07074D]"
-                              >
-                                Name
-                              </label>
-                              <input
-                                class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
-                                value={name}
-                                readOnly
-                              />
-                            </div>
-                            <div class="mb-5">
-                              <label
-                                for="email"
-                                class="mb-3 block text-base font-medium text-[#07074D]"
-                              >
-                                Email Address
-                              </label>
-                              <input
-                                type="email"
-                                name="email"
-                                id="email"
-                                class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
-                                value={email}
-                                readOnly
-                              />
-                            </div>
-                            <div class="mb-5">
-                              <label
-                                for="phone"
-                                class="mb-3 block text-base font-medium text-[#07074D]"
-                              >
-                                Phone Number
-                              </label>
-                              <input
-                                type="text"
-                                name="phone"
-                                id="phone"
-                                class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
-                                value={phone}
-                                readOnly
-                              />
-                            </div>
-
-                            <div class="-mx-3 flex flex-wrap">
-                              <div class="w-full px-3 sm:w-1/2">
-                                <div class="mb-5">
-                                  <label
-                                    for="date"
-                                    class="mb-3 block text-base font-medium text-[#07074D]"
-                                  >
-                                    Role
-                                  </label>
-                                  <input
-                                    type="text"
-                                    name="date"
-                                    id="role"
-                                    class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
-                                    value={user.role}
-                                    readOnly
-                                  />
-                                </div>
-                              </div>
-                              <div class="mb-5 relative">
-                                <label
-                                  for="password"
-                                  class="mb-3 block text-base font-medium text-[#07074D]"
-                                >
-                                  Password
-                                </label>
-                                <input
-                                  type={showPassword ? "text" : "password"}
-                                  name="password"
-                                  id="password"
-                                  value={password}
-                                  className="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 pr-12 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
-                                  readOnly
-                                />
-                                <button
-                                  type="button"
-                                  onClick={togglePasswordVisibility}
-                                  className="absolute inset-y-0 mt-10 right-0 flex items-center px-2 focus:outline-none"
-                                >
-                                  {showPassword ? (
-                                    <FaEyeSlash className="text-gray-400" />
-                                  ) : (
-                                    <FaEye className="text-gray-400 transition-transform duration-300 ease-in-out transform hover:scale-110" />
-                                  )}
-                                </button>
-                              </div>
-                            </div>
-                          </form>
                         </div>
                       </div>
                     </div>
@@ -257,7 +230,7 @@ function Euserprofile() {
               </div>
             </div>
           </div>
-        </>
+        </div>
       )}
     </div>
   );

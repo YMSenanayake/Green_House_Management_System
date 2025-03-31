@@ -188,7 +188,7 @@ function Employeedashboard() {
     const endUTC = Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
 
     // Calculate difference in days
-    const diffDays = Math.round((endUTC - startUTC) / (1000 * 60 * 60 * 24));
+    const diffDays = Math.round((endUTC - startUTC) / (1000 * 60 * 60 * 24)) + 1;
 
     return diffDays + (diffDays === 1 ? " day" : " days");
   };
