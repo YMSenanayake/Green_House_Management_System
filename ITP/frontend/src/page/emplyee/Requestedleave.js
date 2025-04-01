@@ -193,10 +193,10 @@ function Requestedleave() {
           height: '48px',
           padding: '0 12px'
         }}
-        disabledDate={(current) => current && current < moment().startOf('day')}
+        disabledDate={(current) => current && current <= moment().endOf('day')}
       />
       <p className="text-xs text-gray-500 mt-2 pl-1">
-        * Cannot select past dates
+        * Cannot select present & past dates
       </p>
     </div>
 

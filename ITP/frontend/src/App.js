@@ -29,6 +29,7 @@ function App() {
         <Route path="e_approveleave" element={<Approveleave/>}/>
         <Route path="/e_editprofile/:uid" element={<Edidemployeeprofile/>}/>
         <Route path="/e_profile_dashboard" element={<Employeeprofiledashboard/>}/>
+        <Route path="/e_atendancde" element={<Employeeattendance/>}/>
         <Route path="e_userprofile/:empid" element={<Euserprofile/>}/>
         <Route path="/forgot-password" element={<Forgopassword/>}/>
         <Route path="e_requestedleave" element={<Requestedleave/>}/>

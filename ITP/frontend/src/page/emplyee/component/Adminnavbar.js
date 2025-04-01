@@ -36,9 +36,9 @@ function Adminnavbar() {
       label: "Leaves"
     },
     {
-      path: "/e_requestedleave",
+      path: "/e_atendancde",
       icon: <FaUserClock className="text-xl" />,
-      label: "Leave Request"
+      label: "Attendance"
     }
   ];
   
