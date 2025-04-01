@@ -54,6 +54,27 @@ const Edidemployeeprofile = () => {
     }
   };
 
+  // Upload image to server
+  const uploadImage = async (file) => {
+    if (!file) return imageurl;
+    
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    try {
+      const response = await axios.post('http://localhost:3000/api/users/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      return response.data.imageUrl; // assuming your API returns the image URL
+    } catch (error) {
+      console.error("Image upload failed:", error);
+      toast.error("Failed to upload image");
+      return imageurl; // fallback to existing image
+    }
+  };
+
   //take data for update
   useEffect(() => {
     async function getUser() {
@@ -73,12 +94,12 @@ const Edidemployeeprofile = () => {
         setPreviewImage(response.user.imageurl);
       } catch (error) {
         setLoading(false);
-        console.log(error);
+        console.log("Error fetching user data:", error.response || error);
         toast.error("Failed to load user data");
       }
     }
     getUser();
-  }, []);
+  }, [uid]);
 
   //updateuser function
   async function Updateuser(e) {
@@ -102,24 +123,33 @@ const Edidemployeeprofile = () => {
       return;
     }
 
-    const updateuser = {
-      name,
-      email,
-      phone,
-      imageurl: previewImage || imageurl,
-      password,
-    };
-
     try {
       setFormLoading(true);
+      
+      // Handle image upload if there's a new image
+      let finalImageUrl = imageurl;
+      if (imageFile) {
+        finalImageUrl = await uploadImage(imageFile);
+      }
+      
+      const updateuser = {
+        name,
+        email,
+        phone,
+        imageurl: finalImageUrl,
+        password,
+      };
+
       const response = (
         await axios.put(
           `http://localhost:3000/api/users/updateuser/${uid}`,
           updateuser
         )
       ).data;
-      console.log(response);
+      
+      console.log("Update response:", response);
       setFormLoading(false);
+      
       Swal.fire(
         "Congratulations",
         "Profile updated successfully",
@@ -129,7 +159,7 @@ const Edidemployeeprofile = () => {
       });
     } catch (error) {
       setFormLoading(false);
-      console.log(error);
+      console.log("Update error:", error.response || error);
       toast.error(error.response?.data?.message || "Failed to update profile");
     }
   }
@@ -155,8 +185,12 @@ const Edidemployeeprofile = () => {
                       <div className="relative mb-4">
                         <img
                           className="h-32 w-32 rounded-full object-cover border-4 border-green-100 shadow-md"
-                          src={previewImage || imageurl}
+                          src={previewImage || imageurl || "https://via.placeholder.com/150"}
                           alt="Profile"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "https://via.placeholder.com/150";
+                          }}
                         />
                         <label
                           htmlFor="file-upload"
@@ -263,7 +297,7 @@ const Edidemployeeprofile = () => {
                       <button
                         type="submit"
                         disabled={formLoading}
-                        className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-8 rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl"
+                        className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-8 rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed"
                       >
                         {formLoading ? (
                           <>

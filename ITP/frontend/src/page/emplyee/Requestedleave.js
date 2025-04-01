@@ -3,6 +3,7 @@ import moment from "moment";
 import { DatePicker, Tooltip } from "antd";
 import axios from "axios";
 import Swal from "sweetalert2";
+import AdprofileNavbar from "./component/AdprofileNavbar";
 import { 
   Calendar as CalendarIcon, 
   Send as SendIcon, 
@@ -161,9 +162,10 @@ function Requestedleave() {
       description: 'Leave request not approved'
     }
   };
-
+  
   return (
-    <div className="min-h-screen bg-green-50 p-6">
+    <div className="min-h-screen bg-green-50">
+      <AdprofileNavbar/>
       <div className="container mx-auto max-w-6xl space-y-8">
         {/* Professional Header */}
         <div className="bg-white shadow-md rounded-2xl p-6 border-l-4 border-green-500">
