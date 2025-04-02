@@ -95,7 +95,7 @@ function EmployeeSidebar() {
           <span className="font-medium">Logout</span>
         </button>
         <p className="text-green-600 text-xs font-medium text-center mt-4">
-          &copy; 2025 GreenGrow Technologies
+          &copy; 2025 GreenGrow 
         </p>
       </div>
     </div>
