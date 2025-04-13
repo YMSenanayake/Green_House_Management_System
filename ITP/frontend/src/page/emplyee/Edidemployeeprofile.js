@@ -19,7 +19,7 @@ const Edidemployeeprofile = () => {
   const { uid } = useParams("");
 
   const [id, setid] = useState("");
-  const [name, setname] = useState("");
+  const [fullName, setname] = useState("");
   const [email, setemail] = useState("");
   const [phone, setphone] = useState("");
   const [imageurl, setimageurl] = useState("");
@@ -86,7 +86,7 @@ const Edidemployeeprofile = () => {
         setLoading(false);
         console.log(response.user);
         setid(response.user._id);
-        setname(response.user.name);
+        setname(response.user.fullName);
         setemail(response.user.email);
         setphone(response.user.phone);
         setPassword(response.user.password);
@@ -105,7 +105,7 @@ const Edidemployeeprofile = () => {
   async function Updateuser(e) {
     e.preventDefault();
     
-    if (!name || !email || !phone || !password) {
+    if (!fullName || !email || !phone || !password) {
       toast.error("Please fill all required fields");
       return;
     }
@@ -133,7 +133,7 @@ const Edidemployeeprofile = () => {
       }
       
       const updateuser = {
-        name,
+        fullName,
         email,
         phone,
         imageurl: finalImageUrl,
@@ -220,7 +220,7 @@ const Edidemployeeprofile = () => {
                           </div>
                           <input
                             type="text"
-                            value={name}
+                            value={fullName}
                             className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-colors duration-300"
                             placeholder="Enter your full name"
                             onChange={(e) => setname(e.target.value)}

@@ -21,7 +21,7 @@ function Euserprofile() {
   const navigate = useNavigate();
 
   const [id, setid] = useState("");
-  const [name, setname] = useState("");
+  const [fullName, setname] = useState("");
   const [email, setemail] = useState("");
   const [phone, setphone] = useState("");
   const [password, setPassword] = useState("");
@@ -38,7 +38,7 @@ function Euserprofile() {
         setLoading(false);
         console.log(response.user);
         setid(response.user._id);
-        setname(response.user.name);
+        setname(response.user.fullName);
         setemail(response.user.email);
         setphone(response.user.phone);
         setimageurl(response.user.imageurl);
@@ -157,7 +157,7 @@ function Euserprofile() {
                       <img
                         className="object-cover object-center h-full w-full"
                         src={user.imageurl || "https://via.placeholder.com/150"}
-                        alt={`${user.name}'s profile`}
+                        alt={`${user.fullName}'s profile`}
                       />
                     </div>
                   </div>
@@ -165,7 +165,7 @@ function Euserprofile() {
                 
                 {/* Profile actions */}
                 <div className="mt-20 text-center px-6">
-                  <h2 className="text-2xl font-bold text-gray-800">{user.name}</h2>
+                  <h2 className="text-2xl font-bold text-gray-800">{user.fullName}</h2>
                   <p className="text-gray-600 font-medium mt-1">{user.role}</p>
                   
                   <div className="flex justify-center mt-4 space-x-4">
@@ -195,7 +195,7 @@ function Euserprofile() {
                     </h3>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <InfoField icon={FaIdCard} label="Full Name" value={name} />
+                      <InfoField icon={FaIdCard} label="Full Name" value={fullName} />
                       <InfoField icon={FaEnvelope} label="Email Address" value={email} />
                       <InfoField icon={FaPhone} label="Phone Number" value={phone} />
                       <InfoField icon={FaUserTag} label="Role" value={user.role} />

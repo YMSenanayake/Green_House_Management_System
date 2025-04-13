@@ -22,7 +22,7 @@ function Employeeattendance() {
       const usersData = await axios.get("http://localhost:3000/api/users/getallusers");
 
       const users = usersData.data.reduce((acc, user) => {
-        acc[user._id] = user.name; // Map userid to user's name
+        acc[user._id] = user.fullName; // Map userid to user's name
         return acc;
       }, {});
       setUsersMap(users);

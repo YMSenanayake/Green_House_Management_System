@@ -20,14 +20,47 @@ function Employeeprofiledashboard() {
   const [rejectLeaves, setRejectLeaves] = useState(0);
   const [todayMarkedIn, setTodayMarkedIn] = useState(false);
   const [todayMarkedOut, setTodayMarkedOut] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const user = JSON.parse(localStorage.getItem("currentuser"));
-  const userId = user._id;
+  // Get current user from localStorage
+  const getCurrentUser = () => {
+    try {
+      const userStr = localStorage.getItem("currentuser");
+      if (!userStr) {
+        throw new Error("No user found in localStorage");
+      }
+      return JSON.parse(userStr);
+    } catch (error) {
+      console.error("Error getting current user:", error);
+      Swal.fire({
+        title: "Session Error",
+        text: "Your session appears to be invalid. Please log in again.",
+        icon: "error",
+        confirmButtonColor: "#EF4444",
+      });
+      // Redirect to login page or handle as appropriate
+      return null;
+    }
+  };
+
+  const user = getCurrentUser();
+  const userId = user?._id;
 
   useEffect(() => {
-    fetchLeaveCounts(userId);
-    checkTodayAttendance(userId);
+    if (userId) {
+      fetchLeaveCounts(userId);
+      checkTodayAttendance(userId);
+    }
   }, [userId]);
+
+  // Update clock every second
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   const fetchLeaveCounts = async (userId) => {
     if (!userId) return;
@@ -37,121 +70,211 @@ function Employeeprofiledashboard() {
       const response = await fetch(
         `http://localhost:3000/api/leaves/leaverequestcounts/${userId}`
       );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      
       const data = await response.json();
-      setPendingLeaves(data.pending);
-      setApprovedLeaves(data.approved);
-      setRejectLeaves(data.dissapproved);
-      setLoading(false);
+      setPendingLeaves(data.pending || 0);
+      setApprovedLeaves(data.approved || 0);
+      setRejectLeaves(data.dissapproved || 0);
     } catch (error) {
       console.error("Error fetching leave counts:", error);
+      setErrorMessage("Failed to load leave data. Please refresh the page.");
+    } finally {
       setLoading(false);
     }
   };
 
   const checkTodayAttendance = async (userId) => {
-    // This is a placeholder for checking if the user has already marked in/out today
-    // You would implement this based on your actual API
+    if (!userId) return;
+    
     try {
       const today = new Date().toLocaleDateString();
-      // Placeholder implementation - you should replace with actual API call
-      const response = await axios.get(
-        `http://localhost:3000/api/attendance/status/${userId}?date=${today}`
+      
+      // First try to get attendance from attendanceIn collection
+      const inResponse = await axios.get(
+        `http://localhost:3000/api/attendanceIn/checkStatus/${userId}?date=${today}`
       );
       
-      if (response.data) {
-        setTodayMarkedIn(response.data.markedIn || false);
-        setTodayMarkedOut(response.data.markedOut || false);
+      if (inResponse.data && inResponse.data.exists) {
+        setTodayMarkedIn(true);
+      }
+      
+      // Then check if there's an out record
+      const outResponse = await axios.get(
+        `http://localhost:3000/api/attendanceOut/checkStatus/${userId}?date=${today}`
+      );
+      
+      if (outResponse.data && outResponse.data.exists) {
+        setTodayMarkedOut(true);
       }
     } catch (error) {
       console.error("Error checking today's attendance:", error);
+      // Don't show error to user for this check, just assume not marked
     }
   };
 
   const handleMarkIn = async () => {
-    setLoading(true);
-    try {
-      const currentUser = JSON.parse(localStorage.getItem("currentuser"));
-
-      const response = await axios.post(
-        "http://localhost:3000/api/attendanceIn/mark_in",
-        {
-          userid: currentUser._id,
-          intime: currentTime.toLocaleTimeString(),
-          date: new Date().toLocaleDateString(),
-        }
-      );
-
-      if (response.status !== 201) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      setTodayMarkedIn(true);
-      setLoading(false);
-      Swal.fire({
-        title: "Checked In!",
-        text: `You have successfully checked in at ${currentTime.toLocaleTimeString()}`,
-        icon: "success",
-        confirmButtonColor: "#38A169",
-        timer: 2000
-      });
-    } catch (error) {
-      console.error("Error marking in:", error);
-      setLoading(false);
+    if (!userId) {
       Swal.fire({
         title: "Error!",
-        text: "Unable to mark attendance. Please try again.",
+        text: "User information not found. Please log in again.",
         icon: "error",
         confirmButtonColor: "#EF4444",
       });
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      // Format time and date in a consistent way
+      const formattedTime = currentTime.toLocaleTimeString();
+      const formattedDate = currentTime.toLocaleDateString();
+      
+      console.log("Sending mark-in request with data:", {
+        userid: userId,
+        intime: formattedTime,
+        date: formattedDate
+      });
+      
+      const response = await axios.post(
+        "http://localhost:3000/api/attendanceIn/mark_in",
+        {
+          userid: userId,
+          intime: formattedTime,
+          date: formattedDate,
+        }
+      );
+
+      console.log("Mark-in response:", response);
+
+      if (response.status === 201 || response.status === 200) {
+        setTodayMarkedIn(true);
+        Swal.fire({
+          title: "Checked In!",
+          text: `You have successfully checked in at ${formattedTime}`,
+          icon: "success",
+          confirmButtonColor: "#38A169",
+          timer: 2000
+        });
+      } else {
+        throw new Error(`Unexpected response status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Error marking in:", error);
+      let errorMsg = "Unable to mark attendance. Please try again.";
+      
+      if (error.response) {
+        console.error("Server error response:", error.response.data);
+        // Use server error message if available
+        errorMsg = error.response.data.message || errorMsg;
+        
+        // Special case for duplicate entry
+        if (error.response.status === 409) {
+          errorMsg = "You have already checked in today.";
+          setTodayMarkedIn(true); // Update state to reflect reality
+        }
+      } else if (error.request) {
+        errorMsg = "Server not responding. Please check your connection.";
+      }
+      
+      Swal.fire({
+        title: "Error!",
+        text: errorMsg,
+        icon: "error",
+        confirmButtonColor: "#EF4444",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleMarkOut = async () => {
-    setLoading(true);
-    try {
-      const currentUser = JSON.parse(localStorage.getItem("currentuser"));
-
-      const response = await axios.post(
-        "http://localhost:3000/api/attendanceOut/mark_out",
-        {
-          userid: currentUser._id,
-          outtime: currentTime.toLocaleTimeString(),
-          date: new Date().toLocaleDateString(),
-        }
-      );
-
-      if (response.status !== 201) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      setTodayMarkedOut(true);
-      setLoading(false);
-      Swal.fire({
-        title: "Checked Out!",
-        text: `You have successfully checked out at ${currentTime.toLocaleTimeString()}`,
-        icon: "success",
-        confirmButtonColor: "#38A169",
-        timer: 2000
-      });
-    } catch (error) {
-      console.error("Error marking out:", error);
-      setLoading(false);
+    if (!userId) {
       Swal.fire({
         title: "Error!",
-        text: "Unable to mark attendance. Please try again.",
+        text: "User information not found. Please log in again.",
         icon: "error",
         confirmButtonColor: "#EF4444",
       });
+      return;
+    }
+    
+    if (!todayMarkedIn) {
+      Swal.fire({
+        title: "Warning!",
+        text: "You need to check in before checking out.",
+        icon: "warning",
+        confirmButtonColor: "#F59E0B",
+      });
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      // Format time and date in a consistent way
+      const formattedTime = currentTime.toLocaleTimeString();
+      const formattedDate = currentTime.toLocaleDateString();
+      
+      console.log("Sending mark-out request with data:", {
+        userid: userId,
+        outtime: formattedTime,
+        date: formattedDate
+      });
+      
+      const response = await axios.post(
+        "http://localhost:3000/api/attendanceOut/mark_out",
+        {
+          userid: userId,
+          outtime: formattedTime,
+          date: formattedDate,
+        }
+      );
+
+      console.log("Mark-out response:", response);
+
+      if (response.status === 201 || response.status === 200) {
+        setTodayMarkedOut(true);
+        Swal.fire({
+          title: "Checked Out!",
+          text: `You have successfully checked out at ${formattedTime}`,
+          icon: "success",
+          confirmButtonColor: "#38A169",
+          timer: 2000
+        });
+      } else {
+        throw new Error(`Unexpected response status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Error marking out:", error);
+      let errorMsg = "Unable to mark attendance. Please try again.";
+      
+      if (error.response) {
+        console.error("Server error response:", error.response.data);
+        // Use server error message if available
+        errorMsg = error.response.data.message || errorMsg;
+        
+        // Special case for duplicate entry
+        if (error.response.status === 409) {
+          errorMsg = "You have already checked out today.";
+          setTodayMarkedOut(true); // Update state to reflect reality
+        }
+      } else if (error.request) {
+        errorMsg = "Server not responding. Please check your connection.";
+      }
+      
+      Swal.fire({
+        title: "Error!",
+        text: errorMsg,
+        icon: "error",
+        confirmButtonColor: "#EF4444",
+      });
+    } finally {
+      setLoading(false);
     }
   };
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-
-    return () => clearInterval(intervalId);
-  }, []);
 
   const handleDateChange = (newDate) => {
     setSelectedDate(newDate);
@@ -161,8 +284,9 @@ function Employeeprofiledashboard() {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   };
 
+  // Reusable stat card component
   const StatCard = ({ title, count, icon: Icon, color }) => (
-    <div className="block w-64 h-36 p-5 bg-white border border-gray-200 rounded-lg shadow-lg transition-transform duration-300 ease-in-out transform hover:scale-105">
+    <div className={`block w-full p-5 bg-white border border-gray-200 rounded-lg shadow-lg transition-transform duration-300 ease-in-out transform hover:scale-105`}>
       <h5 className={`mb-2 text-xl font-bold tracking-tight text-${color}`}>
         {title}
       </h5>
@@ -175,10 +299,30 @@ function Employeeprofiledashboard() {
     </div>
   );
 
+  // If no user found, show error
+  if (!userId) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-50">
+        <div className="text-center p-8 bg-white rounded-lg shadow-lg">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Authentication Error</h2>
+          <p className="text-gray-700 mb-6">User information not found. Please log in again.</p>
+          <button 
+            onClick={() => window.location.href = "/login"}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          >
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-gray-50 min-h-screen">
       {loading ? (
-        <Loader />
+        <div className="flex justify-center items-center h-screen">
+          <Loader />
+        </div>
       ) : (
         <div className="flex">
           <AdprofileNavbar />
@@ -186,6 +330,12 @@ function Employeeprofiledashboard() {
             <div className="mb-6">
               <h1 className="text-2xl font-bold text-gray-800">Employee Profile Board</h1>
               <p className="text-sm text-gray-600">{currentTime.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+              
+              {errorMessage && (
+                <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                  {errorMessage}
+                </div>
+              )}
             </div>
 
             {/* Stats Section */}
@@ -217,7 +367,7 @@ function Employeeprofiledashboard() {
                 <Calendar
                   onChange={handleDateChange}
                   value={selectedDate}
-                  className="border-0 shadow-none transition-transform duration-300 ease-in-out transform hover:scale-105"
+                  className="border-0 shadow-none w-full"
                   tileClassName="text-center"
                 />
               </div>
