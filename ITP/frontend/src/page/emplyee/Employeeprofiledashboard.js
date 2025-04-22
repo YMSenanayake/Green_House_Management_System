@@ -91,28 +91,42 @@ function Employeeprofiledashboard() {
     if (!userId) return;
     
     try {
-      const today = new Date().toLocaleDateString();
+      // Format date in yyyy-MM-dd format to ensure consistency
+      const today = new Date();
+      const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
       
-      // First try to get attendance from attendanceIn collection
+      console.log("Checking attendance for date:", formattedDate);
+      
+      // Try to get attendance from attendanceIn collection
       const inResponse = await axios.get(
-        `http://localhost:3000/api/attendanceIn/checkStatus/${userId}?date=${today}`
+        `http://localhost:3000/api/attendanceIn/checkStatus/${userId}?date=${formattedDate}`
       );
+      
+      console.log("Check-in status response:", inResponse.data);
       
       if (inResponse.data && inResponse.data.exists) {
         setTodayMarkedIn(true);
+      } else {
+        setTodayMarkedIn(false);
       }
       
       // Then check if there's an out record
       const outResponse = await axios.get(
-        `http://localhost:3000/api/attendanceOut/checkStatus/${userId}?date=${today}`
+        `http://localhost:3000/api/attendanceOut/checkStatus/${userId}?date=${formattedDate}`
       );
+      
+      console.log("Check-out status response:", outResponse.data);
       
       if (outResponse.data && outResponse.data.exists) {
         setTodayMarkedOut(true);
+      } else {
+        setTodayMarkedOut(false);
       }
     } catch (error) {
       console.error("Error checking today's attendance:", error);
-      // Don't show error to user for this check, just assume not marked
+      // Set default state to be safe
+      setTodayMarkedIn(false);
+      setTodayMarkedOut(false);
     }
   };
 
@@ -129,9 +143,15 @@ function Employeeprofiledashboard() {
     
     setLoading(true);
     try {
-      // Format time and date in a consistent way
-      const formattedTime = currentTime.toLocaleTimeString();
-      const formattedDate = currentTime.toLocaleDateString();
+      // Format date in yyyy-MM-dd format to ensure consistency
+      const today = new Date();
+      const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+      
+      // Format time in HH:mm:ss format
+      const hours = String(today.getHours()).padStart(2, '0');
+      const minutes = String(today.getMinutes()).padStart(2, '0');
+      const seconds = String(today.getSeconds()).padStart(2, '0');
+      const formattedTime = `${hours}:${minutes}:${seconds}`;
       
       console.log("Sending mark-in request with data:", {
         userid: userId,
@@ -139,17 +159,33 @@ function Employeeprofiledashboard() {
         date: formattedDate
       });
       
+      // First check if already marked in
+      const checkResponse = await axios.get(
+        `http://localhost:3000/api/attendanceIn/checkStatus/${userId}?date=${formattedDate}`
+      );
+      
+      if (checkResponse.data && checkResponse.data.exists) {
+        setTodayMarkedIn(true);
+        throw new Error("You have already checked in today.");
+      }
+      
+      // If not already marked in, proceed with the check-in
       const response = await axios.post(
         "http://localhost:3000/api/attendanceIn/mark_in",
         {
           userid: userId,
           intime: formattedTime,
           date: formattedDate,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
       );
-
+  
       console.log("Mark-in response:", response);
-
+  
       if (response.status === 201 || response.status === 200) {
         setTodayMarkedIn(true);
         Swal.fire({
@@ -166,7 +202,9 @@ function Employeeprofiledashboard() {
       console.error("Error marking in:", error);
       let errorMsg = "Unable to mark attendance. Please try again.";
       
-      if (error.response) {
+      if (error.message === "You have already checked in today.") {
+        errorMsg = error.message;
+      } else if (error.response) {
         console.error("Server error response:", error.response.data);
         // Use server error message if available
         errorMsg = error.response.data.message || errorMsg;
@@ -214,9 +252,15 @@ function Employeeprofiledashboard() {
     
     setLoading(true);
     try {
-      // Format time and date in a consistent way
-      const formattedTime = currentTime.toLocaleTimeString();
-      const formattedDate = currentTime.toLocaleDateString();
+      // Format date in yyyy-MM-dd format to ensure consistency
+      const today = new Date();
+      const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+      
+      // Format time in HH:mm:ss format
+      const hours = String(today.getHours()).padStart(2, '0');
+      const minutes = String(today.getMinutes()).padStart(2, '0');
+      const seconds = String(today.getSeconds()).padStart(2, '0');
+      const formattedTime = `${hours}:${minutes}:${seconds}`;
       
       console.log("Sending mark-out request with data:", {
         userid: userId,
@@ -224,17 +268,33 @@ function Employeeprofiledashboard() {
         date: formattedDate
       });
       
+      // First check if already marked out
+      const checkResponse = await axios.get(
+        `http://localhost:3000/api/attendanceOut/checkStatus/${userId}?date=${formattedDate}`
+      );
+      
+      if (checkResponse.data && checkResponse.data.exists) {
+        setTodayMarkedOut(true);
+        throw new Error("You have already checked out today.");
+      }
+      
+      // If not already marked out, proceed with the check-out
       const response = await axios.post(
         "http://localhost:3000/api/attendanceOut/mark_out",
         {
           userid: userId,
           outtime: formattedTime,
           date: formattedDate,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
       );
-
+  
       console.log("Mark-out response:", response);
-
+  
       if (response.status === 201 || response.status === 200) {
         setTodayMarkedOut(true);
         Swal.fire({
@@ -251,7 +311,9 @@ function Employeeprofiledashboard() {
       console.error("Error marking out:", error);
       let errorMsg = "Unable to mark attendance. Please try again.";
       
-      if (error.response) {
+      if (error.message === "You have already checked out today.") {
+        errorMsg = error.message;
+      } else if (error.response) {
         console.error("Server error response:", error.response.data);
         // Use server error message if available
         errorMsg = error.response.data.message || errorMsg;
