@@ -3,7 +3,7 @@ import moment from "moment";
 import { DatePicker, Tooltip } from "antd";
 import axios from "axios";
 import Swal from "sweetalert2";
-import Adminnavbar from "./component/Adminnavbar"; 
+import AdprofileNavbar from "./component/AdprofileNavbar"; 
 import { 
   Calendar as CalendarIcon, 
   Send as SendIcon, 
@@ -182,10 +182,9 @@ function Requestedleave() {
   return (
     <div className="flex min-h-screen bg-green-50">
       {/* Sidebar navbar */}
-      <Adminnavbar />
-      
+      <AdprofileNavbar/>
       {/* Main content area with proper margin to accommodate the sidebar */}
-      <div className="ml-64 flex-1 p-6">
+      <div className="ml-30 flex-1 p-6">
         <div className="container mx-auto max-w-6xl space-y-8">
           {/* Professional Header */}
           <div className="bg-white shadow-md rounded-2xl p-6 border-l-4 border-green-500">
