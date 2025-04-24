@@ -47,7 +47,7 @@ function EmployeeSidebar() {
 
   return (
     <div
-      className="bg-gradient-to-b from-green-50 to-green-100 text-green-900 shadow-lg min-w-[240px] h-screen flex flex-col justify-between"
+      className="bg-gradient-to-b from-green-50 to-green-100 text-green-900 shadow-lg min-w-[240px] h-screen flex flex-col justify-between fixed left-0 top-0"
       style={{ width: "240px" }}
     >
       {/* Header */}
@@ -64,7 +64,7 @@ function EmployeeSidebar() {
       </div>
 
       {/* Navigation */}
-      <div className="flex-grow py-6 px-3">
+      <div className="flex-grow py-6 px-3 overflow-y-auto">
         <p className="text-xs font-medium text-green-600 uppercase tracking-wider px-4 mb-4">
           Main Navigation
         </p>
@@ -73,7 +73,7 @@ function EmployeeSidebar() {
           <Link
             key={item.path}
             to={item.path}
-            className={`flex items-center w-full py-3 px-4 mb-10 rounded-lg transition-all duration-300 ${
+            className={`flex items-center w-full py-3 px-4 mb-6 rounded-lg transition-all duration-300 ${
               location.pathname === item.path
                 ? "bg-green-600 text-white shadow-md"
                 : "hover:bg-green-200 text-green-800"

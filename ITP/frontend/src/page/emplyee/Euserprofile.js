@@ -117,13 +117,13 @@ function Euserprofile() {
   // Information card component for better organization
   const InfoField = ({ icon: Icon, label, value }) => (
     <div className="mb-5">
-      <label className="mb-3 block text-base font-medium text-gray-700">
+      <label className="mb-2 block text-sm font-medium text-gray-700">
         {label}
       </label>
-      <div className="flex items-center w-full rounded-md border border-gray-200 bg-white py-3 px-4 text-gray-700">
-        <Icon className="mr-3 text-gray-500" />
+      <div className="flex items-center w-full rounded-lg border border-gray-200 bg-white py-3 px-4 text-gray-700 shadow-sm">
+        <Icon className="mr-3 text-blue-500" />
         <input
-          className="w-full bg-white outline-none border-none focus:ring-0"
+          className="w-full bg-white outline-none border-none focus:ring-0 text-gray-800"
           value={value}
           readOnly
         />
@@ -132,28 +132,29 @@ function Euserprofile() {
   );
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-gray-100 min-h-screen">
       {loading ? (
         <Loader />
       ) : (
         <div className="flex">
           <AdprofileNavbar />
           <div className="flex flex-col w-full p-6">
-            <div className="max-w-3xl mx-auto w-full" data-aos="fade-up">
-              <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+            <div className="max-w-4xl mx-auto w-full" data-aos="fade-up">
+              <div className="bg-white shadow-xl rounded-xl overflow-hidden border border-gray-100">
                 {/* Profile header with background */}
                 <div className="relative">
-                  <div className="h-40 overflow-hidden">
+                  <div className="h-48 overflow-hidden">
                     <img
                       className="w-full object-cover object-center"
                       src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fHByb2ZpbGUlMjBiYWNrZ3JvdW5kfGVufDB8fDB8fHww&auto=format&fit=crop&w=900&q=60"
                       alt="Profile background"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30"></div>
                   </div>
                   
                   {/* Profile image */}
                   <div className="absolute left-1/2 transform -translate-x-1/2 -bottom-16">
-                    <div className="w-32 h-32 relative border-4 border-white rounded-full overflow-hidden shadow-md">
+                    <div className="w-32 h-32 relative border-4 border-white rounded-full overflow-hidden shadow-lg">
                       <img
                         className="object-cover object-center h-full w-full"
                         src={user.imageurl || "https://via.placeholder.com/150"}
@@ -165,13 +166,13 @@ function Euserprofile() {
                 
                 {/* Profile actions */}
                 <div className="mt-20 text-center px-6">
-                  <h2 className="text-2xl font-bold text-gray-800">{user.fullName}</h2>
-                  <p className="text-gray-600 font-medium mt-1">{user.role}</p>
+                  <h2 className="text-3xl font-bold text-gray-800">{user.fullName}</h2>
+                  <p className="text-blue-600 font-medium mt-1">{user.role}</p>
                   
-                  <div className="flex justify-center mt-4 space-x-4">
+                  <div className="flex justify-center mt-6 space-x-4">
                     <Link 
                       to={`/e_editprofile/${user._id}`}
-                      className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors duration-300"
+                      className="inline-flex items-center px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-300 shadow-md"
                     >
                       <FaEdit className="mr-2" />
                       Edit Profile
@@ -179,7 +180,7 @@ function Euserprofile() {
                     
                     <button
                       onClick={() => deleteuser(user._id)}
-                      className="inline-flex items-center px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors duration-300"
+                      className="inline-flex items-center px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-300 shadow-md"
                     >
                       <MdDeleteForever className="mr-2" />
                       Delete Account
@@ -188,9 +189,10 @@ function Euserprofile() {
                 </div>
                 
                 {/* Profile information */}
-                <div className="p-6 mt-4">
-                  <div className="bg-gray-50 p-5 rounded-lg">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">
+                <div className="p-8 mt-4">
+                  <div className="bg-gray-50 p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h3 className="text-xl font-semibold text-gray-800 mb-5 border-b pb-3 flex items-center">
+                      <FaIdCard className="mr-2 text-blue-500" />
                       Personal Information
                     </h3>
                     
@@ -201,20 +203,21 @@ function Euserprofile() {
                       <InfoField icon={FaUserTag} label="Role" value={user.role} />
                       
                       <div className="mb-5 md:col-span-2">
-                        <label className="mb-3 block text-base font-medium text-gray-700">
+                        <label className="mb-2 block text-sm font-medium text-gray-700">
                           Password
                         </label>
-                        <div className="relative flex items-center w-full rounded-md border border-gray-200 bg-white py-3 px-4">
+                        <div className="relative flex items-center w-full rounded-lg border border-gray-200 bg-white py-3 px-4 shadow-sm">
                           <input
                             type={showPassword ? "text" : "password"}
-                            className="w-full bg-white outline-none border-none focus:ring-0"
+                            className="w-full bg-white outline-none border-none focus:ring-0 text-gray-800"
                             value={password}
                             readOnly
                           />
                           <button
                             type="button"
                             onClick={togglePasswordVisibility}
-                            className="text-gray-500 hover:text-gray-700 focus:outline-none transition-colors duration-200"
+                            className="text-blue-500 hover:text-blue-700 focus:outline-none transition-colors duration-200"
+                            aria-label={showPassword ? "Hide password" : "Show password"}
                           >
                             {showPassword ? (
                               <FaEyeSlash className="text-lg" />
@@ -225,6 +228,10 @@ function Euserprofile() {
                         </div>
                       </div>
                     </div>
+                  </div>
+                  
+                  <div className="mt-6 text-center text-sm text-gray-500">
+                    <p>Last updated: {new Date().toLocaleDateString()}</p>
                   </div>
                 </div>
               </div>

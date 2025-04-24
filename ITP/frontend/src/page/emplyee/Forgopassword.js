@@ -112,9 +112,7 @@ function Forgopassword() {
             <div className="flex flex-col items-center gap-10 md:flex-row md:gap-0">
               {/* Logo and intro section */}
               <div className="w-full md:w-3/5 text-center md:text-left text-white p-6">
-                <div className="mb-8">
-                  <img src={logo} alt="Logo" className="h-12 mx-auto md:mx-0" />
-                </div>
+              
                 <h1 className="text-4xl md:text-5xl font-bold mb-4 shadow-text">
                   Reset Your Password
                 </h1>
