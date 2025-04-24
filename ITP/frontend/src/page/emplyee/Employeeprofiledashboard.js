@@ -346,8 +346,9 @@ function Employeeprofiledashboard() {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   };
 
+  // Reusable stat card component
   const StatCard = ({ title, count, icon: Icon, color }) => (
-    <div className={`block w-full p-5 bg-white border border-gray-200 rounded-lg shadow-lg transition-transform duration-300 ease-in-out transform hover:scale-105`}>
+    <div className={`block w-full p-5 bg-white border border-gray-200 rounded-lg shadow-lg transition-transform duration-0 ease-in-out transform hover:scale-105`}>
       <h5 className={`mb-2 text-xl font-bold tracking-tight text-${color}`}>
         {title}
       </h5>
@@ -379,120 +380,129 @@ function Employeeprofiledashboard() {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen flex">
-      {/* Fixed sidebar layout with proper spacing */}
-      <div className="w-64 fixed h-full" style={{ width: "16rem" }}>
-        <AdprofileNavbar />
-      </div>
-      
+    <div className="bg-gray-50 min-h-screen">
       {loading ? (
-        <div className="flex justify-center items-center h-screen w-full ml-64">
+        <div className="flex justify-center items-center h-screen">
           <Loader />
         </div>
       ) : (
-        <div className="flex-1 ml-64 p-6">
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold text-gray-800">Employee Profile Board</h1>
-            <p className="text-sm text-gray-600">{currentTime.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-            
-            {errorMessage && (
-              <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-                {errorMessage}
-              </div>
-            )}
-          </div>
+        <div className="flex">
+          <AdprofileNavbar />
+          <div className="flex flex-col w-full pl-60">
+            <div className="mb-6">
+              <h1 className="text-2xl font-bold text-gray-800">Employee Profile Board</h1>
+              <p className="text-sm text-gray-600">{currentTime.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+              
+              {errorMessage && (
+                <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                  {errorMessage}
+                </div>
+              )}
+            </div>
 
-          {/* Stats Section - Fixed to match screenshot */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="block w-full p-5 bg-white border border-gray-200 rounded-lg shadow-lg transition-transform duration-300 ease-in-out transform hover:scale-105">
-              <h5 className="mb-2 text-xl font-bold tracking-tight text-green-600">
-                Approved Leaves
-              </h5>
-              <div className="flex items-center mt-5">
-                <div className="p-3 rounded-full bg-green-100">
-                  <GiExitDoor className="w-8 h-8 text-green-600" />
-                </div>
-                <p className="text-3xl font-bold text-gray-700 ml-6">{approvedLeaves}</p>
-              </div>
-            </div>
-            
-            <div className="block w-full p-5 bg-white border border-gray-200 rounded-lg shadow-lg transition-transform duration-300 ease-in-out transform hover:scale-105">
-              <h5 className="mb-2 text-xl font-bold tracking-tight text-yellow-500">
-                Pending Leaves
-              </h5>
-              <div className="flex items-center mt-5">
-                <div className="p-3 rounded-full bg-yellow-100">
-                  <FaPersonCircleQuestion className="w-8 h-8 text-yellow-500" />
-                </div>
-                <p className="text-3xl font-bold text-gray-700 ml-6">{pendingLeaves}</p>
-              </div>
-            </div>
-            
-            <div className="block w-full p-5 bg-white border border-gray-200 rounded-lg shadow-lg transition-transform duration-300 ease-in-out transform hover:scale-105">
-              <h5 className="mb-2 text-xl font-bold tracking-tight text-red-500">
-                Rejected Leaves
-              </h5>
-              <div className="flex items-center mt-5">
-                <div className="p-3 rounded-full bg-red-100">
-                  <FaRegTimesCircle className="w-8 h-8 text-red-500" />
-                </div>
-                <p className="text-3xl font-bold text-gray-700 ml-6">{rejectLeaves}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Calendar and Attendance Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">Calendar</h2>
-              <Calendar
-                onChange={handleDateChange}
-                value={selectedDate}
-                className="border-0 shadow-none w-full"
-                tileClassName="text-center"
+            {/* Stats Section */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <StatCard 
+                title="Approved Leaves" 
+                count={approvedLeaves} 
+                icon={GiExitDoor} 
+                color="green-600" 
+              />
+              <StatCard 
+                title="Pending Leaves" 
+                count={pendingLeaves} 
+                icon={FaPersonCircleQuestion} 
+                color="yellow-500" 
+              />
+              <StatCard 
+                title="Rejected Leaves" 
+                count={rejectLeaves} 
+                icon={FaRegTimesCircle} 
+                color="red-500" 
               />
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">
-                Attendance Tracker
-              </h2>
-              <div className="flex flex-col items-center mb-4">
-                <div className="text-4xl font-bold text-gray-800 mb-2">
-                  {formatTime(currentTime)}
-                </div>
-                <p className="text-sm text-gray-500">Sri Lankan Standard Time</p>
+            {/* Calendar and Attendance Section */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white p-6 rounded-lg shadow-lg">
+                <h2 className="text-lg font-semibold text-gray-800 mb-4">Calendar</h2>
+                <Calendar
+                  onChange={handleDateChange}
+                  value={selectedDate}
+                  className="border-0 shadow-none w-full"
+                  tileClassName="text-center"
+                />
               </div>
 
-              <div className="grid grid-cols-2 gap-4 mt-6">
-                {/* Fixed check-in button to match screenshot */}
-                <div 
-                  className="flex flex-col items-center justify-center p-4 rounded-lg border bg-green-100 border-green-200 transition-all duration-300"
-                >
-                  <div className="p-3 rounded-full bg-green-100 mb-2">
-                    <FaSignInAlt className="w-6 h-6 text-green-600" />
+              <div className="bg-white p-6 rounded-lg shadow-lg">
+                <h2 className="text-lg font-semibold text-gray-800 mb-4">
+                  Attendance Tracker
+                </h2>
+                <div className="flex flex-col items-center mb-4">
+                  <div className="text-4xl font-bold text-gray-800 mb-2">
+                    {formatTime(currentTime)}
                   </div>
-                  <span className="text-sm font-medium">
-                    Checked In
-                  </span>
-                  <span className="text-xs text-gray-500 mt-1">
-                    Today
-                  </span>
+                  <p className="text-sm text-gray-500">Sri Lankan Standard Time</p>
                 </div>
 
-                {/* Fixed check-out button to match screenshot */}
-                <div 
-                  className="flex flex-col items-center justify-center p-4 rounded-lg border bg-blue-100 border-blue-200 transition-all duration-300"
-                >
-                  <div className="p-3 rounded-full bg-blue-100 mb-2">
-                    <FaSignOutAlt className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <span className="text-sm font-medium">
-                    Checked Out
-                  </span>
-                  <span className="text-xs text-gray-500 mt-1">
-                    Today
-                  </span>
+                <div className="grid grid-cols-2 gap-4 mt-6">
+                  <button
+                    onClick={handleMarkIn}
+                    disabled={todayMarkedIn}
+                    className={`flex flex-col items-center justify-center p-4 rounded-lg border ${
+                      todayMarkedIn 
+                        ? "bg-green-100 border-green-200" 
+                        : "bg-white border-gray-200 hover:bg-green-50 hover:border-green-300"
+                    } transition-all duration-300`}
+                  >
+                    <div className="p-3 rounded-full bg-green-100 mb-2">
+                      <FaSignInAlt className="w-6 h-6 text-green-600" />
+                    </div>
+                    <span className="text-sm font-medium">
+                      {todayMarkedIn ? "Checked In" : "Check In"}
+                    </span>
+                    {todayMarkedIn && (
+                      <span className="text-xs text-gray-500 mt-1">
+                        Today
+                      </span>
+                    )}
+                  </button>
+
+                  <button
+                    onClick={handleMarkOut}
+                    disabled={!todayMarkedIn || todayMarkedOut}
+                    className={`flex flex-col items-center justify-center p-4 rounded-lg border ${
+                      todayMarkedOut 
+                        ? "bg-blue-100 border-blue-200" 
+                        : !todayMarkedIn 
+                          ? "bg-gray-100 border-gray-200 cursor-not-allowed" 
+                          : "bg-white border-gray-200 hover:bg-blue-50 hover:border-blue-300"
+                    } transition-all duration-300`}
+                  >
+                    <div className={`p-3 rounded-full mb-2 ${
+                      !todayMarkedIn && !todayMarkedOut 
+                        ? "bg-gray-100" 
+                        : todayMarkedOut 
+                          ? "bg-blue-100" 
+                          : "bg-blue-100"
+                    }`}>
+                      <FaSignOutAlt className={`w-6 h-6 ${
+                        !todayMarkedIn && !todayMarkedOut 
+                          ? "text-gray-400" 
+                          : todayMarkedOut 
+                            ? "text-blue-600" 
+                            : "text-blue-600"
+                      }`} />
+                    </div>
+                    <span className="text-sm font-medium">
+                      {todayMarkedOut ? "Checked Out" : "Check Out"}
+                    </span>
+                    {todayMarkedOut && (
+                      <span className="text-xs text-gray-500 mt-1">
+                        Today
+                      </span>
+                    )}
+                  </button>
                 </div>
               </div>
             </div>
