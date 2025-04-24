@@ -1,5 +1,6 @@
 require("dotenv").config(); // Load environment variables
 const express = require("express");
+
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
@@ -21,12 +22,12 @@ app.get("/",(req, res) => {
 // Import Database Connection
 require("./db");
 
-const itemhistoryRoutes = require("./routes/ItemhistoryRoute")
-const inventoryRoutes = require("./routes/inventoryRoute");
+const inventory = require("./routes/inventoryRoute")
 
 
-app.use("/api/inventory", inventoryRoutes);
-app.use("/api/inventory", itemhistoryRoutes);
+
+app.use("/api/inventory", inventory);
+
 
 
 // Start Server
