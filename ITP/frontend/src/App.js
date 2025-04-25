@@ -16,6 +16,8 @@ import Euserprofile from "./page/emplyee/Euserprofile";
 import Forgopassword from './page/emplyee/Forgopassword'
 import Requestedleave from "./page/emplyee/Requestedleave";
 import Userupdate from "./page/emplyee/Userupdate";
+import InventoryDashboard from "./page/inventory/inventoryDashboard";
+import ProductList from "./page/inventory/productList";
 
 function App() {
   return (
@@ -34,6 +36,8 @@ function App() {
         <Route path="/forgot-password" element={<Forgopassword/>}/>
         <Route path="e_requestedleave" element={<Requestedleave/>}/>
         <Route path="/e_updates/:userid" element={<Userupdate/>}/>
+        <Route path="/inventorydashboard" element={<InventoryDashboard/>}/>
+        <Route path="/productlist" element={<ProductList/>}/>
 
       </Routes>
     </Router>
