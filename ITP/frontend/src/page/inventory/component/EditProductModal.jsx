@@ -60,8 +60,8 @@ const EditProductModal = ({ visible, onCancel, onSuccess, product, categories })
 
     setLoading(true);
     try {
-      // Make sure we're using the correct endpoint and ID
-      const response = await fetch(`/api/product/${product._id}`, {
+      // Use the correct API endpoint with the product ID
+      const response = await fetch(`http://localhost:3000/api/product/${product._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -78,12 +78,16 @@ const EditProductModal = ({ visible, onCancel, onSuccess, product, categories })
           duration: 3
         });
         
-        // Make sure we're calling onSuccess with updated data
+        // Call onSuccess callback to refresh product list
         if (onSuccess && typeof onSuccess === 'function') {
-          onSuccess(data.product || formattedValues);
+          onSuccess();
         }
         
-        onCancel(); // Close the modal
+        // Close the modal
+        onCancel();
+        
+        // Reload the page to reflect the changes
+        window.location.reload();
       } else {
         message.error(data.message || 'Failed to update product!');
       }
@@ -119,8 +123,8 @@ const EditProductModal = ({ visible, onCancel, onSuccess, product, categories })
   // Update stock status directly via API
   const updateStockStatus = async (status) => {
     try {
-      const response = await fetch(`/api/product/${product._id}/stock`, {
-        method: 'PATCH',
+      const response = await fetch(`http://localhost:3000/api/product/${product._id}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -338,7 +342,6 @@ const EditProductModal = ({ visible, onCancel, onSuccess, product, categories })
               </Tooltip>
             </div>
           }
-          required
         >
           <Card 
             title="Current Images" 
