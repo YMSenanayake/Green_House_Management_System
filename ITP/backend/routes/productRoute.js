@@ -17,6 +17,6 @@ router.post('/', createProduct);
 router.put('/:id', updateProduct);
 router.delete('/:id', deleteProduct);
 router.get('/category/:category', getProductsByCategory);
-router.patch('/:id/stock', updateProductStock);
+router.put('/:id/stock', updateProductStock);
 
 module.exports = router;
