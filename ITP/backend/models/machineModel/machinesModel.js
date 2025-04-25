@@ -1,35 +1,51 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose")
 
-const machineSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  cost: { type: [Number], required: true },
-  parts: { type: [String], required: true },
-  description: { type: String, required: true },
-  location: { 
+const machinesSchema = mongoose.Schema({
+
+    name : {
+        type : String,
+        requre : true
+    },
+    parts: {
+        type: [String], // Define name as an array of strings
+        required: true // Corrected typo: "required" instead of "require"
+    },
+    cost: {
+        type: [Number], // Define name as an array of numbers
+        required: true
+    },
+    discription : {
+        type : String,
+        requre : true
+    },
+    location: {
+        type: String,
+        required: true
+    },
+    lastRepairDate : {
+        type : Date,
+        require : true
+    },
+    repairTimePeriod :{
+        type : Number,
+        require : true
+    },
+    // Location : {
+    //     type : String,
+    //     require : true
+    vehicleNo: {
     type: String, 
-    required: true,
-    enum: ['poly_tunnel_01', 'poly_tunnel_02', 'poly_tunnel_03', 'Inventory', 'Vehicle']
+    required: false // Not necessarily required for all locations
   },
-  lastRepairDate: { type: Date, required: true },
-  repairTimePeriod: { type: Number, required: true },
-  remainingDays: { type: Number },
-  nextRepairDate: { type: Date },
-  vehicleNO: { type: String },
-  capacity: { type: Number },
-  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  createdAt: { type: Date, default: Date.now }
-});
-
-machineSchema.pre('save', function(next) {
-  if (this.lastRepairDate && this.repairTimePeriod) {
-    const nextRepair = new Date(this.lastRepairDate);
-    nextRepair.setDate(nextRepair.getDate() + this.repairTimePeriod);
-    this.nextRepairDate = nextRepair;
-    
-    const today = new Date();
-    this.remainingDays = Math.ceil((nextRepair - today) / (1000 * 60 * 60 * 24));
+  capacity: {
+    type: Number, 
+    required: false // Not necessarily required for all locations
   }
-  next();
-});
 
-module.exports = mongoose.model('Machine', machineSchema);
+},{
+    timestamps : true,
+})
+
+const machinesModel = mongoose.model('machine' , machinesSchema)
+
+module.exports = machinesModel
