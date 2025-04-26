@@ -20,6 +20,7 @@ import InventoryDashboard from "./page/inventory/inventoryDashboard";
 import ProductList from "./page/inventory/productList";
 import FinancePage from './page/financial/FinanceDashboard';
 import FinanceAdd from './page/financial/FinanceAdd';
+import FInancialList from './page/financial/FinanceList';
 
 
 
@@ -44,6 +45,7 @@ function App() {
         <Route path="/productlist" element={<ProductList/>}/>
         <Route path="/fhinancialdashboard" element={<FinancePage/>}/>
         <Route path="/addfinacial" element={<FinanceAdd/>}/>
+        <Route path="/financialist" element={<FInancialList/>}/>
 
       </Routes>
     </Router>

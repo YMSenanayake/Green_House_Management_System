@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const AddFinanceForm = ({ onSubmit, onCancel }) => {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     type: 'income',
     date: new Date().toISOString().slice(0, 10),
@@ -50,6 +52,9 @@ const AddFinanceForm = ({ onSubmit, onCancel }) => {
       });
       
       toast.success('Finance entry added successfully');
+      
+      // Navigate to financial list page after successful submission
+      navigate('/financialist');
     } catch (error) {
       console.error('Error submitting form:', error);
       toast.error('Failed to add finance entry');
@@ -59,8 +64,8 @@ const AddFinanceForm = ({ onSubmit, onCancel }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md border border-gray-200 mb-8">
-      <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4 rounded-t-lg">
+    <div className="bg-white rounded-lg shadow-md border border-green-200 mb-8">
+      <div className="bg-gradient-to-r from-green-500 to-green-600 px-6 py-4 rounded-t-lg">
         <h2 className="text-lg font-bold text-white flex items-center">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -79,7 +84,7 @@ const AddFinanceForm = ({ onSubmit, onCancel }) => {
                 name="type" 
                 value={form.type} 
                 onChange={handleChange} 
-                className="block w-full pl-3 pr-10 py-2.5 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 rounded-lg appearance-none bg-white"
+                className="block w-full pl-3 pr-10 py-2.5 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 rounded-lg appearance-none bg-white"
               >
                 <option value="income">Income</option>
                 <option value="expense">Expense</option>
@@ -100,7 +105,7 @@ const AddFinanceForm = ({ onSubmit, onCancel }) => {
               name="date" 
               value={form.date} 
               onChange={handleChange} 
-              className="block w-full px-3 py-2.5 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+              className="block w-full px-3 py-2.5 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" 
             />
           </div>
 
@@ -112,7 +117,7 @@ const AddFinanceForm = ({ onSubmit, onCancel }) => {
                 name="category" 
                 value={form.category} 
                 onChange={handleChange} 
-                className="block w-full pl-3 pr-10 py-2.5 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 rounded-lg appearance-none bg-white"
+                className="block w-full pl-3 pr-10 py-2.5 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 rounded-lg appearance-none bg-white"
               >
                 <option value="order">Order</option>
                 <option value="salary">Salary</option>
@@ -142,7 +147,7 @@ const AddFinanceForm = ({ onSubmit, onCancel }) => {
               placeholder="Enter a detailed description" 
               value={form.description} 
               onChange={handleChange} 
-              className="block w-full px-3 py-2.5 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+              className="block w-full px-3 py-2.5 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" 
             />
           </div>
 
@@ -159,7 +164,7 @@ const AddFinanceForm = ({ onSubmit, onCancel }) => {
                 placeholder="0.00" 
                 value={form.amount} 
                 onChange={handleChange} 
-                className="block w-full pl-8 pr-3 py-2.5 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                className="block w-full pl-8 pr-3 py-2.5 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" 
               />
             </div>
           </div>
@@ -170,14 +175,14 @@ const AddFinanceForm = ({ onSubmit, onCancel }) => {
           <button 
             type="button" 
             onClick={onCancel} 
-            className="px-4 py-2 rounded-md border border-gray-300 bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+            className="px-4 py-2 rounded-md border border-gray-300 bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
           >
             Cancel
           </button>
           <button 
             type="submit" 
             disabled={isLoading}
-            className={`px-6 py-2 rounded-md bg-blue-600 text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+            className={`px-6 py-2 rounded-md bg-green-600 text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors flex items-center ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
           >
             {isLoading ? (
               <>

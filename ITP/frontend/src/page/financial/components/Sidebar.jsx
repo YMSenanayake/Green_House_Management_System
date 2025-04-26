@@ -11,7 +11,7 @@ const Sidebar = () => {
           <FaChartPie className="text-yellow-300" />
           <span>Dashboard</span>
         </Link>
-        <Link to="/financeList" className="flex items-center gap-3 hover:bg-green-600 px-4 py-2 rounded transition">
+        <Link to="/financialist" className="flex items-center gap-3 hover:bg-green-600 px-4 py-2 rounded transition">
           <FaList className="text-yellow-300" />
           <span>All Entries</span>
         </Link>
