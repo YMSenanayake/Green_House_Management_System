@@ -123,11 +123,6 @@ const AddFinanceForm = ({ onSubmit, onCancel }) => {
                 <option value="salary">Salary</option>
                 <option value="fertilizer">Fertilizer</option>
                 <option value="pesticide">Pesticide</option>
-                <option value="greenhouse rent">Greenhouse Rent</option>
-                <option value="utility bills">Utility Bills</option>
-                <option value="seed sales">Seed Sales</option>
-                <option value="equipment sale">Equipment Sale</option>
-                <option value="petty-cash">Petty Cash</option>
                 <option value="other">Other</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
@@ -156,7 +151,7 @@ const AddFinanceForm = ({ onSubmit, onCancel }) => {
             <label className="block text-sm font-medium text-gray-700 mb-1">Amount (Rs.)</label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span className="text-gray-500">₹</span>
+                <span className="text-gray-500">Rs</span>
               </div>
               <input 
                 type="number" 
@@ -164,7 +159,7 @@ const AddFinanceForm = ({ onSubmit, onCancel }) => {
                 placeholder="0.00" 
                 value={form.amount} 
                 onChange={handleChange} 
-                className="block w-full pl-8 pr-3 py-2.5 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" 
+                className="block w-full pl-8  pr-3 py-2.5 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" 
               />
             </div>
           </div>

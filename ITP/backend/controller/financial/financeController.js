@@ -33,6 +33,21 @@ exports.getAllFinance = async (req, res) => {
     }
 };
 
+
+// Get by ID
+exports.getFinanceById = async (req, res) => {
+    try {
+        const data = await Finance.findById(req.params.id);
+        if (!data) {
+            return res.status(404).json({ message: 'Finance record not found' });
+        }
+        res.json(data);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+
 // Update
 exports.updateFinance = async (req, res) => {
     try {

@@ -8,6 +8,7 @@ import UpdateFinanceForm from '../UpdateFinanceForm';
 const FinanceList = ({ data, refresh }) => {
   const [editingId, setEditingId] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
+  const [selectedData, setSelectedData] = useState(null); // This will hold the selected entry data
 
   const deleteEntry = async (id) => {
     if (window.confirm('Are you sure you want to delete this entry?')) {
@@ -27,6 +28,7 @@ const FinanceList = ({ data, refresh }) => {
   };
 
   const formatCurrency = (amount) => {
+    if (amount === null || amount === undefined) return '';
     return `Rs. ${amount.toLocaleString('en-IN')}`;
   };
 
@@ -47,9 +49,9 @@ const FinanceList = ({ data, refresh }) => {
     const formatEntries = (entries) =>
       entries.map((e) => [
         new Date(e.date).toLocaleDateString(),
-        e.category,
-        e.description,
-        `Rs. ${e.amount.toFixed(2)}`,
+        e.category || '',
+        e.description || '',
+        `Rs. ${e.amount ? e.amount.toFixed(2) : '0.00'}`,
       ]);
 
     const incomeEntries = data.filter((e) => e.type === 'income');
@@ -58,9 +60,9 @@ const FinanceList = ({ data, refresh }) => {
     const groupByCategory = (entries, cat) =>
       entries.filter((e) => {
         if (cat === 'others') {
-          return !['salary', 'order', 'petty-cash'].includes(e.category.toLowerCase());
+          return !['salary', 'order', 'petty-cash'].includes((e.category || '').toLowerCase());
         }
-        return e.category.toLowerCase() === cat;
+        return (e.category || '').toLowerCase() === cat;
       });
 
     doc.setFontSize(12);
@@ -105,8 +107,8 @@ const FinanceList = ({ data, refresh }) => {
       }
     });
 
-    const totalIncome = incomeEntries.reduce((sum, e) => sum + e.amount, 0);
-    const totalExpense = expenseEntries.reduce((sum, e) => sum + e.amount, 0);
+    const totalIncome = incomeEntries.reduce((sum, e) => sum + (e.amount || 0), 0);
+    const totalExpense = expenseEntries.reduce((sum, e) => sum + (e.amount || 0), 0);
     const balance = totalIncome - totalExpense;
 
     doc.setFontSize(12);
@@ -135,6 +137,8 @@ const FinanceList = ({ data, refresh }) => {
   };
 
   const getCategoryBadge = (category) => {
+    if (!category) return 'bg-gray-100 text-gray-800';
+    
     const categories = {
       'salary': 'bg-purple-100 text-purple-800',
       'order': 'bg-blue-100 text-blue-800',
@@ -148,6 +152,12 @@ const FinanceList = ({ data, refresh }) => {
     return type === 'income' 
       ? 'bg-green-100 text-green-800 border-green-200'
       : 'bg-red-100 text-red-800 border-red-200';
+  };
+
+  const handleEditClick = (id) => {
+    const selected = data.find((item) => item._id === id);
+    setSelectedData(selected); // Set the selected data for editing
+    setEditingId(id); // Trigger the update form
   };
 
   return (
@@ -165,29 +175,42 @@ const FinanceList = ({ data, refresh }) => {
         </button>
       </div>
 
-      {editingId && (
-        <div className="mb-6 p-4 border border-blue-100 rounded-md bg-blue-50">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-medium text-blue-800">Edit Transaction</h3>
-            <button 
-              onClick={() => setEditingId(null)}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+      {/* Edit form section */}
+      {editingId && selectedData && (
+        <div className="mb-6">
+          <div className="bg-white rounded-lg shadow-md border border-green-200 overflow-hidden">
+            <div className="bg-gradient-to-r from-green-500 to-green-600 px-6 py-4 flex justify-between items-center">
+              <h3 className="text-lg font-bold text-white flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+                Edit Transaction
+              </h3>
+              <button 
+                onClick={() => setEditingId(null)} // Close the edit form
+                className="text-white hover:text-gray-200"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="p-6">
+              <UpdateFinanceForm
+                id={editingId}
+                formData={selectedData} // Pass the selected data to the form
+                onClose={() => setEditingId(null)}
+                onUpdate={() => {
+                  if (typeof refresh === 'function') {
+                    refresh();
+                  }
+                  setEditingId(null);
+                  setSelectedData(null); // Reset selected data after update
+                }}
+              />
+            </div>
           </div>
-          <UpdateFinanceForm
-            id={editingId}
-            onClose={() => setEditingId(null)}
-            onUpdate={() => {
-              if (typeof refresh === 'function') {
-                refresh();
-              }
-              setEditingId(null);
-            }}
-          />
         </div>
       )}
 
@@ -227,12 +250,16 @@ const FinanceList = ({ data, refresh }) => {
                       </span>
                     </td>
                     <td className="px-4 py-3 border-t border-gray-200">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getCategoryBadge(entry.category)}`}>
-                        {entry.category}
-                      </span>
+                      {entry.category ? (
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getCategoryBadge(entry.category)}`}>
+                          {entry.category}
+                        </span>
+                      ) : (
+                        <span className="text-gray-400 text-xs">None</span>
+                      )}
                     </td>
                     <td className="hidden md:table-cell px-4 py-3 border-t border-gray-200 max-w-xs truncate">
-                      {entry.description}
+                      {entry.description || <span className="text-gray-400 text-xs">No description</span>}
                     </td>
                     <td className={`px-4 py-3 border-t border-gray-200 font-medium ${entry.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
                       {formatCurrency(entry.amount)}
@@ -240,8 +267,8 @@ const FinanceList = ({ data, refresh }) => {
                     <td className="px-4 py-3 border-t border-gray-200">
                       <div className="flex space-x-2">
                         <button
-                          onClick={() => setEditingId(entry._id)}
-                          className="bg-blue-100 text-blue-700 p-1.5 rounded hover:bg-blue-200 transition-colors"
+                          onClick={() => handleEditClick(entry._id)} // Open the edit form with the selected data
+                          className="bg-green-100 text-green-700 p-1.5 rounded hover:bg-green-200 transition-colors"
                           title="Edit"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -275,7 +302,7 @@ const FinanceList = ({ data, refresh }) => {
                       <td colSpan={6} className="px-4 py-3 border-t border-blue-100">
                         <div className="text-sm text-gray-700">
                           <p className="font-medium">Description:</p>
-                          <p className="mb-2">{entry.description}</p>
+                          <p className="mb-2">{entry.description || <span className="text-gray-400 text-xs italic">No description provided</span>}</p>
                         </div>
                       </td>
                     </tr>
@@ -284,29 +311,6 @@ const FinanceList = ({ data, refresh }) => {
               ))}
             </tbody>
           </table>
-
-          {/* Table footer with totals */}
-          <div className="mt-4 p-4 bg-gray-50 rounded-md border border-gray-200">
-            <div className="flex flex-wrap justify-between items-center">
-              <div className="text-sm text-gray-600">
-                Total Entries: <span className="font-medium">{data.length}</span>
-              </div>
-              <div className="flex space-x-4">
-                <div className="text-sm">
-                  <span className="text-gray-600">Income:</span> 
-                  <span className="ml-1 font-medium text-green-600">
-                    {formatCurrency(data.filter(e => e.type === 'income').reduce((sum, e) => sum + e.amount, 0))}
-                  </span>
-                </div>
-                <div className="text-sm">
-                  <span className="text-gray-600">Expense:</span> 
-                  <span className="ml-1 font-medium text-red-600">
-                    {formatCurrency(data.filter(e => e.type === 'expense').reduce((sum, e) => sum + e.amount, 0))}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       )}
     </div>
