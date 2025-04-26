@@ -11,6 +11,7 @@
     "aos": "^2.3.4",
     "axios": "^1.8.4",
     "chart.js": "^4.4.8",
+    "dom-to-image": "^2.6.0",
     "framer-motion": "^12.5.0",
     "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
@@ -26,6 +27,7 @@
     "react-router-dom": "^7.4.0",
     "react-scripts": "5.0.1",
     "react-spinners": "^0.15.0",
+    "react-toastify": "^11.0.5",
     "recharts": "^2.15.3",
     "sweetalert2": "^11.17.2",
     "web-vitals": "^2.1.4"
