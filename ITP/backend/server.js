@@ -21,6 +21,7 @@ const attendanceInRoute = require("./routes/attendanceInRoutes");
 const attendanceOutRoute = require("./routes/attendanceOutRoutes");
 const forgotpasswordRoute=require("./routes/forgotpasswordRout.js")
 const productRoute=require("./routes/productRoute.js")
+const financialRoute=require("./routes/financialRoute.js")
 
 app.use("/api/users", usersRoute);
 app.use("/api/leaves", leaveRoute);
@@ -28,6 +29,7 @@ app.use("/api/attendanceIn", attendanceInRoute);
 app.use("/api/attendanceOut", attendanceOutRoute);
 app.use("/api/resetpassword", forgotpasswordRoute);
 app.use("/api/product", productRoute);
+app.use("/api/financial", financialRoute);
 
 // Define Routes (Example)
 app.get("/", (req, res) => {
