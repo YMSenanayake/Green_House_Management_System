@@ -113,7 +113,11 @@ const Edidemployeeprofile = () => {
   const validateForm = () => {
     const newErrors = {};
     
-    if (!fullName.trim()) newErrors.fullName = "Name is required";
+    if (!fullName.trim()) {
+      newErrors.fullName = "Name is required";
+    } else if (!/^[A-Za-z\s]+$/.test(fullName)) {
+      newErrors.fullName = "Name can only contain letters and spaces";
+    }
     
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
