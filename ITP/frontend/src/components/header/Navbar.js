@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-import logo from "../../Images/logo.png";
+import logo from './../header/logo.png';
 
 
 function Navbar() {
@@ -16,7 +16,7 @@ function Navbar() {
   function Logout() {
     localStorage.removeItem("currentuser");
     localStorage.removeItem("user:detail");
-    window.location.href = "/login";
+    window.location.href = "/";
   }
 
   return (
@@ -57,9 +57,8 @@ function Navbar() {
                           {" "}
                           <div class="flex flex-col">
                             <Link
-                            to={`/u_userprofile/${user._id}`}>
+                            to={`/e_profile_dashboard`}>
                             <button
-                             
                               class="flex justify-center gap-3 rounded-md py-2 px-3 hover:text-white hover:bg-whatsapp-green no-underline"
                             >
                               <svg

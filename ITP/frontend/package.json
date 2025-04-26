@@ -46,6 +46,24 @@
     "stream-browserify": "^3.0.0",
     "sweetalert": "^2.1.2",
     "sweetalert2": "^11.10.7",
+   
+   
+    "dom-to-image": "^2.6.0",
+    "framer-motion": "^12.5.0",
+   
+    "lucide-react": "^0.484.0",
+   
+   
+   
+   
+   
+   
+   
+   
+    
+   
+    "recharts": "^2.15.3",
+   
     "web-vitals": "^2.1.4"
   },
   "scripts": {

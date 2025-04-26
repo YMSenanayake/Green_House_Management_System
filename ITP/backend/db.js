@@ -2,7 +2,7 @@ require("dotenv").config(); // Load environment variables
 const mongoose = require("mongoose");
 
 // MongoDB Connection URL from .env file
-const mongoURL = process.env.MONGO_URL || "mongodb+srv://yasirumadhusankasenanayake:yasiru@cluster0.wgoyhki.mongodb.net/?retryWrites=true&w=majority&appName=Cluster00";
+const mongoURL = process.env.MONGO_URL || "mongodb+srv://yasirumadhusankasenanayake:yasiru@cluster0.wgoyhki.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 mongoose.connect(mongoURL, { 
   useNewUrlParser: true, 
