@@ -48,7 +48,7 @@ function LoginForm(){
                         navigate("/inventorydashboard");
                         break;
                     case "Financial manager":
-                        navigate("/Financialdashboard");
+                        navigate("/fhinancialdashboard");
                         break;
                     case "Machine manager":
                         navigate("/machinedashboard");   
