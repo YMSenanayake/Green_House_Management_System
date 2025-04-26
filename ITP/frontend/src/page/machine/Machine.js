@@ -227,185 +227,193 @@ export default function Machine() {
             <Adminnavbar />
 
             {isModalOpen && (
-              // Popup form
-              <div className="fixed inset-0 z-10 overflow-y-auto bg-gray-500 bg-opacity-50 flex justify-center items-center backdrop-blur-sm">
-                <div
-                  ref={modalRef}
-                  className="bg-white rounded-3xl overflow-hidden shadow-xl max-w-md"
-                >
-                  <div className="px-12 py-12">
-                    <h2 className="text-xl font-semibold text-dark font-custom">
-                      Enter the machine's details
-                    </h2>
+            // Popup form
+            <div className="fixed inset-0 z-10 overflow-y-auto bg-emerald-50 bg-opacity-70 flex justify-center items-center backdrop-blur-sm">
+              <div
+                ref={modalRef}
+                className="bg-white rounded-3xl overflow-hidden shadow-lg max-w-md border border-green-100"
+              >
+                <div className="px-12 py-10">
+                  <h2 className="text-xl font-semibold text-green-800 font-custom">
+                    Enter the machine's details
+                  </h2>
 
-                    <form onSubmit={addMachine} className="mt-8">
-                      <div>
+                  <form onSubmit={addMachine} className="mt-6">
+                    <div>
+                      <input
+                        type="text"
+                        placeholder="Enter machine name"
+                        value={name}
+                        onChange={(e) => setname(e.target.value)}
+                        className="mt-1 p-3 block w-full rounded-xl bg-green-50 border border-green-200 focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-green-400 font-custom text-md"
+                        required
+                      />
+                    </div>
+                    
+                    <div className="mt-6">
+                      <label
+                        className="block mb-2 text-sm font-medium text-green-700"
+                        htmlFor="parts"
+                      >
+                        Cost
+                      </label>
+                      {cost.map((value, index) => (
                         <input
+                          key={index}
+                          className="w-full px-3 py-2 mb-2 text-gray-700 bg-green-50 border border-green-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
                           type="text"
-                          placeholder="Enter machine name"
-                          value={name}
-                          onChange={(e) => setname(e.target.value)}
-                          className="mt-1 p-2 block w-full rounded-3xl dark:bg-table-row border-none focus:outline-whatsapp-green placeholder-gray-500 placeholder-opacity-50 font-custom text-md"
-                          required
+                          value={value}
+                          onChange={(e) =>
+                            handleCostChange(index, e.target.value)
+                          }
                         />
-                      </div>
-                      <div className="mt-4">
-                        <label
-                          className="block mb-2 text-sm font-bold text-gray-700"
-                          htmlFor="parts"
-                        >
-                          Cost
-                        </label>
-                        {cost.map((value, index) => (
-                          <input
-                            key={index}
-                            className="w-full px-3 py-2 mb-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                            type="text"
-                            value={value}
-                            onChange={(e) =>
-                              handleCostChange(index, e.target.value)
-                            }
-                          />
-                        ))}
-                        <button
-                          className="px-4 py-2 font-bold text-black rounded bg-whatsapp-green hover:bg-blue-700 focus:outline-none focus:shadow-outline"
-                          type="button"
-                          onClick={() => addCostInput()}
-                        >
-                          Add Cost
-                        </button>
-                      </div>
+                      ))}
+                      <button
+                        className="px-4 py-2 font-medium text-white rounded-lg bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 transition-colors"
+                        type="button"
+                        onClick={() => addCostInput()}
+                      >
+                        Add Cost
+                      </button>
+                    </div>
 
-                      <div className="mb-4">
-                        <label
-                          className="block mb-2 text-sm font-bold text-gray-700"
-                          htmlFor="parts"
-                        >
-                          Parts
-                        </label>
-                        {parts.map((value, index) => (
-                          <input
-                            key={index}
-                            className="w-full px-3 py-2 mb-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                            type="text"
-                            value={value}
-                            onChange={(e) =>
-                              handlePartsChange(index, e.target.value)
-                            }
-                          />
-                        ))}
-                        <button
-                          className="px-4 py-2 font-bold text-white rounded bg-whatsapp-green hover:bg-blue-700 focus:outline-none focus:shadow-outline"
-                          type="button"
-                          onClick={() => addPartsInput()}
-                        >
-                          Add Parts
-                        </button>
-                      </div>
-
-                      <div className="mb-4">
-                        <label
-                          className="block mb-2 text-sm font-bold text-gray-700"
-                          htmlFor="name"
-                        >
-                          discription
-                        </label>
+                    <div className="mt-6">
+                      <label
+                        className="block mb-2 text-sm font-medium text-green-700"
+                        htmlFor="parts"
+                      >
+                        Parts
+                      </label>
+                      {parts.map((value, index) => (
                         <input
-                          className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                          id="discription"
+                          key={index}
+                          className="w-full px-3 py-2 mb-2 text-gray-700 bg-green-50 border border-green-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
                           type="text"
-                          value={discription}
-                          onChange={(e) => setDiscript(e.target.value)}
+                          value={value}
+                          onChange={(e) =>
+                            handlePartsChange(index, e.target.value)
+                          }
                         />
-                      </div>
+                      ))}
+                      <button
+                        className="px-4 py-2 font-medium text-white rounded-lg bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 transition-colors"
+                        type="button"
+                        onClick={() => addPartsInput()}
+                      >
+                        Add Parts
+                      </button>
+                    </div>
 
-                      <div className="mb-4">
-                        <label
-                          className="block text-sm font-bold text-gray-700"
-                          htmlFor="location"
-                        >
-                          Location
-                        </label>
-                        <select
-                          value={location}
-                          onChange={(e) => handleLocationChange(e.target.value)}
-                          className="block w-full mt-1 p-2 rounded-md border-gray-300 focus:ring-whatsapp-green focus:border-whatsapp-green"
-                        >
-                          {locations.map((loc) => (
-                            <option key={loc} value={loc}>
-                              {loc}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                    <div className="mt-6">
+                      <label
+                        className="block mb-2 text-sm font-medium text-green-700"
+                        htmlFor="name"
+                      >
+                        Description
+                      </label>
+                      <input
+                        className="w-full px-3 py-2 text-gray-700 bg-green-50 border border-green-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                        id="discription"
+                        type="text"
+                        value={discription}
+                        onChange={(e) => setDiscript(e.target.value)}
+                      />
+                    </div>
 
-                      {location === "Vehicle" && (
-                        <>
-                          <div className="mb-4">
-                            <label
-                              className="block text-sm font-bold text-gray-700"
-                              htmlFor="vehicalNO"
-                            >
-                              Vehicle No
-                            </label>
-                            <input
-                              type="text"
-                              id="vehicalNO"
-                              value={vehicalNO}
-                              onChange={(e) => setVehicalNO(e.target.value)}
-                              className="block w-full mt-1 p-2 rounded-md border-gray-300 focus:ring-whatsapp-green focus:border-whatsapp-green"
-                            />
-                          </div>
+                    <div className="mt-6">
+                      <label
+                        className="block text-sm font-medium text-green-700"
+                        htmlFor="location"
+                      >
+                        Location
+                      </label>
+                      <select
+                        value={location}
+                        onChange={(e) => handleLocationChange(e.target.value)}
+                        className="block w-full mt-1 p-2 rounded-lg bg-green-50 border border-green-200 focus:ring-2 focus:ring-green-400 focus:border-green-400"
+                      >
+                        {locations.map((loc) => (
+                          <option key={loc} value={loc}>
+                            {loc}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
-                          <div className="mb-4">
-                            <label
-                              className="block text-sm font-bold text-gray-700"
-                              htmlFor="capacity"
-                            >
-                              Capacity
-                            </label>
-                            <input
-                              type="text"
-                              id="capacity"
-                              value={capacity}
-                              onChange={(e) => setCapacity(e.target.value)}
-                              className="block w-full mt-1 p-2 rounded-md border-gray-300 focus:ring-whatsapp-green focus:border-whatsapp-green"
-                            />
-                          </div>
-                        </>
-                      )}
+                    {location === "Vehicle" && (
+                      <>
+                        <div className="mt-6">
+                          <label
+                            className="block text-sm font-medium text-green-700"
+                            htmlFor="vehicalNO"
+                          >
+                            Vehicle No
+                          </label>
+                          <input
+                            type="text"
+                            id="vehicalNO"
+                            value={vehicalNO}
+                            onChange={(e) => setVehicalNO(e.target.value)}
+                            className="block w-full mt-1 p-2 rounded-lg bg-green-50 border border-green-200 focus:ring-2 focus:ring-green-400 focus:border-green-400"
+                          />
+                        </div>
 
-                      <div>
+                        <div className="mt-6">
+                          <label
+                            className="block text-sm font-medium text-green-700"
+                            htmlFor="capacity"
+                          >
+                            Capacity
+                          </label>
+                          <input
+                            type="text"
+                            id="capacity"
+                            value={capacity}
+                            onChange={(e) => setCapacity(e.target.value)}
+                            className="block w-full mt-1 p-2 rounded-lg bg-green-50 border border-green-200 focus:ring-2 focus:ring-green-400 focus:border-green-400"
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    <div className="mt-6">
+                      <label className="block text-sm font-medium text-green-700 mb-2">
+                        Last Repair Date
+                      </label>
+                      <div className="bg-green-50 rounded-lg border border-green-200">
                         <DatePicker
                           selected={lastRepairDate}
                           onChange={(date) => setLastRepairDate(date)}
-                          dateFormat="dd/MM/yyyy" // Adjust the date format as needed
+                          dateFormat="dd/MM/yyyy"
+                          className="w-full p-2 bg-transparent focus:outline-none"
                         />
                       </div>
+                    </div>
 
-                      <div>
-                        <input
-                          type="text"
-                          placeholder="repair time period"
-                          value={repairTimePeriod}
-                          onChange={(e) => setperiod(e.target.value)}
-                          className="mt-1 p-2 block w-full rounded-3xl dark:bg-table-row border-none focus:outline-whatsapp-green placeholder-gray-500 placeholder-opacity-50 font-custom text-md"
-                          required
-                        />
-                      </div>
-                      <div className="mt-8 mb-2">
-                        <button
-                          type="submit"
-                          className="text-black bg-dark hover:bg-darkhover block w-full focus:outline-none font-semibold rounded-md font-custom text-md px-5 py-2.5 text-center me-2 mb-2 dark:bg-dark dark:hover:bg-darkhover"
-                        >
-                          Submit
-                        </button>
-                      </div>
-                    </form>
-                  </div>
+                    <div className="mt-6">
+                      <input
+                        type="text"
+                        placeholder="Repair time period"
+                        value={repairTimePeriod}
+                        onChange={(e) => setperiod(e.target.value)}
+                        className="p-3 block w-full rounded-xl bg-green-50 border border-green-200 focus:outline-none focus:ring-2 focus:ring-green-400 placeholder-green-400 font-custom text-md"
+                        required
+                      />
+                    </div>
+                    
+                    <div className="mt-8 mb-2">
+                      <button
+                        type="submit"
+                        className="text-white bg-green-600 hover:bg-green-700 block w-full font-medium rounded-xl font-custom text-md px-5 py-3 text-center transition-colors focus:outline-none focus:ring-2 focus:ring-green-500"
+                      >
+                        Submit
+                      </button>
+                    </div>
+                  </form>
                 </div>
               </div>
-            )}
+            </div>
+          )}
             <div className="flex flex-col w-full">
               <br></br>
               <br></br>
@@ -449,8 +457,8 @@ export default function Machine() {
                 <Link to="/m_MachinePdf">
                   <button
                     type="submit"
-                    class="text-black bg-whatsapp-green hover:bg-Buttongreen focus:outline-none focus:ring-4 focus:ring-Buttongreen font-medium rounded-full text-me px-5 py-2.5 text-center me-2 mb-2 dark:whatsapp-green dark:hover:bg-Buttongreen dark:focus:ring-Buttongreen font-sans shadow-xl max-w-md mx-auto"
-                  >
+                    class="text-black bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-me px-5 py-2.5 text-center me-2 mb-2 dark:bg-green-500 dark:hover:bg-green-600 dark:focus:ring-green-700 font-sans shadow-xl max-w-md mx-auto"
+                    >
                     print machine details
                   </button>
                 </Link>
@@ -461,7 +469,7 @@ export default function Machine() {
 
                 <button
                   type="submit"
-                  class="text-black bg-whatsapp-green hover:bg-Buttongreen focus:outline-none focus:ring-4 focus:ring-Buttongreen font-medium rounded-full text-me px-5 py-2.5 text-center me-2 mb-2 dark:whatsapp-green dark:hover:bg-Buttongreen dark:focus:ring-Buttongreen font-sans shadow-xl max-w-md mx-auto"
+                  class="text-black bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-me px-5 py-2.5 text-center me-2 mb-2 dark:bg-green-500 dark:hover:bg-green-600 dark:focus:ring-green-700 font-sans shadow-xl max-w-md mx-auto"
                   onClick={openModal}
                 >
                   Click Here to Add a machine
@@ -520,7 +528,7 @@ export default function Machine() {
 
                           <button>
                             <div
-                              class="text-white object-left-bottom cursor-not-allowed relative inline-block bg-whatsapp-green hover:bg-Buttongreen focus:outline-none focus:ring-4 focus:ring-Buttongreen font-medium rounded-full text-me px-5 py-2.5 text-center me-2 mb-2 dark:whatsapp-green dark:hover:bg-Buttongreen dark:focus:ring-Buttongreen font-sans shadow-xl"
+                              class="text-white object-left-bottom cursor-not-allowed relative inline-block bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-me px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-800 font-sans shadow-xl"
                               onClick={() => handleDelete(machine._id)}
                             >
                               DELETE
@@ -529,8 +537,8 @@ export default function Machine() {
 
                           <button>
                             <Link to={`/m_update/${machine._id}`}>
-                              <div class="text-white object-bottom relative inline-block bg-whatsapp-green hover:bg-Buttongreen focus:outline-none focus:ring-4 focus:ring-Buttongreen font-medium rounded-full text-me px-5 py-2.5 text-center me-2 mb-2 dark:whatsapp-green dark:hover:bg-Buttongreen dark:focus:ring-Buttongreen font-sans shadow-xl">
-                                UPDATE
+                            <div class="text-white object-bottom relative inline-block bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-me px-5 py-2.5 text-center me-2 mb-2 dark:bg-green-500 dark:hover:bg-green-600 dark:focus:ring-green-700 font-sans shadow-xl">
+                            UPDATE
                               </div>
                             </Link>
                           </button>
@@ -629,7 +637,7 @@ export default function Machine() {
             )} */}
 
                             <div className="h-10 font-serif text-xl text-black">
-                              discription
+                              description
                             </div>
                             <li class="font-serif text-l text-sky-400">
                               {machine.discription}
