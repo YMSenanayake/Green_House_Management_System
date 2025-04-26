@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link} from "react-router-dom";
 import toast from "react-hot-toast";
-import { motion } from "framer-motion"; // ✅ Import motion
+import { motion } from "framer-motion";
 import backgroundImage from "./background.jpg";
 import logo from "./logo.png";
 
@@ -10,11 +10,13 @@ function LoginForm(){
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
+        setErrorMessage(""); // Clear previous error messages
 
         const userCredentials = {email, password};
 
@@ -58,12 +60,34 @@ function LoginForm(){
                             toast.error("Unsupported user role.");
                 }
             } else {
-              toast.error("Login failed. Please check your credentials.");
+              setErrorMessage("Invalid email or password. Please try again.");
+              toast.error("Login failed. Please check your credentials.", {
+                duration: 4000,
+                position: "top-center",
+                style: {
+                  background: "#ff4b4b",
+                  color: "white",
+                  fontWeight: "bold",
+                  padding: "16px",
+                  borderRadius: "10px",
+                }
+              });
             }
         }catch (error) {
             console.error(error);
             setLoading(false);
-            toast.error("Invalid credentials or server error.");
+            setErrorMessage("Invalid email or password. Please try again.");
+            toast.error("Invalid credentials or server error.", {
+              duration: 4000,
+              position: "top-center",
+              style: {
+                background: "#ff4b4b",
+                color: "white",
+                fontWeight: "bold",
+                padding: "16px",
+                borderRadius: "10px",
+              }
+            });
         }
     };
 
@@ -86,7 +110,7 @@ function LoginForm(){
           </a>
           
     
-          {/* ✅ Animated Login Box */}
+          {/* Animated Login Box */}
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
@@ -96,6 +120,16 @@ function LoginForm(){
             <h2 className="text-3xl font-semibold text-center text-white mb-8">Login</h2>
     
             <form onSubmit={handleLogin} className="space-y-6">
+              {errorMessage && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-red-500/80 text-white p-3 rounded-lg text-center font-medium"
+                >
+                  {errorMessage}
+                </motion.div>
+              )}
+              
               <input
                 type="email"
                 placeholder="Email"
@@ -124,7 +158,7 @@ function LoginForm(){
             </form>
     
             <p className="text-center mt-6 text-white/80 text-sm">
-              Don’t have an account?{" "}
+              Don't have an account?{" "}
               <Link to="/signup" className="text-white font-medium underline hover:text-white/90">
                 Create Account
               </Link>
