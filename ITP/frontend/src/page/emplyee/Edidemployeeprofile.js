@@ -1,97 +1,54 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import AdprofileNavbar from "./component/AdprofileNavbar";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
-import { 
-  FaEye, FaEyeSlash, FaPencilAlt, FaSave, FaUser, FaEnvelope, 
-  FaPhone, FaLock, FaArrowLeft, FaExclamationTriangle 
-} from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaPencilAlt, FaSave, FaUser, FaEnvelope, FaPhone, FaLock, FaArrowLeft } from "react-icons/fa";
 import Loader from "../../components/header/Loader";
 
 import AOS from "aos";
 import "aos/dist/aos.css";
 
 AOS.init({
-  duration: 800,
-  once: true,
+  duration: 800, // Slightly reduced animation duration for better UX
 });
 
 const Edidemployeeprofile = () => {
-  const { uid } = useParams();
-  const navigate = useNavigate();
-  
-  // Form state
-  const [formData, setFormData] = useState({
-    id: "",
-    fullName: "",
-    email: "",
-    phone: "",
-    password: "",
-    imageurl: ""
-  });
-  
-  // UI state
-  const [loading, setLoading] = useState(true);
+  const { uid } = useParams("");
+
+  const [id, setid] = useState("");
+  const [fullName, setname] = useState("");
+  const [email, setemail] = useState("");
+  const [phone, setphone] = useState("");
+  const [imageurl, setimageurl] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
+
+  const [showPasswords, setShowPasswords] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [previewImage, setPreviewImage] = useState("");
-  
-  // Validation state
-  const [errors, setErrors] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
-    password: ""
-  });
+  const [errors, setErrors] = useState({});
 
-  // Handle form input changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    
-    // Clear the error for this field when user types
-    setErrors({
-      ...errors,
-      [name]: ""
-    });
-    
-    // Special handling for phone field - only allow digits
-    if (name === "phone") {
-      const phoneValue = value.replace(/\D/g, '');
-      setFormData({
-        ...formData,
-        [name]: phoneValue
-      });
-    } else {
-      setFormData({
-        ...formData,
-        [name]: value
-      });
-    }
+  const togglePasswordVisibility_1 = () => {
+    setShowPasswords((prevShowPasswords) => !prevShowPasswords);
   };
 
-  // Toggle password visibility
-  const togglePasswordVisibility = () => {
-    setShowPassword((prev) => !prev);
+  const togglePasswordVisibility_2 = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
   // Handle image upload
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file size (max 5MB)
+      // Check file size (limit to 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        toast.error("Image size should be less than 5MB");
-        return;
-      }
-      
-      // Validate file type
-      const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
-      if (!validTypes.includes(file.type)) {
-        toast.error("Please upload a valid image file (JPEG, PNG, GIF)");
+        toast.error("Image must be less than 5MB");
         return;
       }
       
@@ -101,222 +58,140 @@ const Edidemployeeprofile = () => {
         setPreviewImage(reader.result);
       };
       reader.readAsDataURL(file);
+      toast.success("Image selected successfully");
     }
   };
 
   // Upload image to server
   const uploadImage = async (file) => {
-    if (!file) return formData.imageurl;
+    if (!file) return imageurl;
+    
+    const formData = new FormData();
+    formData.append('image', file);
     
     try {
-      const formData = new FormData();
-      formData.append('image', file);
-      
       const response = await axios.post('http://localhost:3000/api/users/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
-      return response.data.imageUrl;
+      return response.data.imageUrl; // assuming your API returns the image URL
     } catch (error) {
       console.error("Image upload failed:", error);
-      throw new Error("Failed to upload image");
+      toast.error("Failed to upload image");
+      return imageurl; // fallback to existing image
     }
   };
 
-  // Fetch user data on component mount
+  //take data for update
   useEffect(() => {
-    async function fetchUserData() {
+    async function getUser() {
       try {
         setLoading(true);
-        const response = await axios.post(`http://localhost:3000/api/users/getuser/${uid}`);
-        
-        if (response.data && response.data.user) {
-          const userData = response.data.user;
-          setFormData({
-            id: userData._id,
-            fullName: userData.fullName,
-            email: userData.email,
-            phone: userData.phone,
-            password: userData.password,
-            imageurl: userData.imageurl
-          });
-          setPreviewImage(userData.imageurl);
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-        toast.error("Failed to load user data. Please try again.");
-      } finally {
+        const response = (
+          await axios.post(`http://localhost:3000/api/users/getuser/${uid}`)
+        ).data;
         setLoading(false);
+        console.log(response.user);
+        setid(response.user._id);
+        setname(response.user.fullName);
+        setemail(response.user.email);
+        setphone(response.user.phone);
+        setPassword(response.user.password);
+        setimageurl(response.user.imageurl);
+        setPreviewImage(response.user.imageurl);
+      } catch (error) {
+        setLoading(false);
+        console.log("Error fetching user data:", error.response || error);
+        toast.error("Failed to load user data");
       }
     }
-    
-    fetchUserData();
+    getUser();
   }, [uid]);
 
-  // Validate form
+  // Form validation
   const validateForm = () => {
-    let isValid = true;
-    const newErrors = {
-      fullName: "",
-      email: "",
-      phone: "",
-      password: ""
-    };
+    const newErrors = {};
     
-    // Name validation
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = "Full name is required";
-      isValid = false;
-    } else if (formData.fullName.trim().length < 2) {
-      newErrors.fullName = "Name must be at least 2 characters";
-      isValid = false;
-    }
+    if (!fullName.trim()) newErrors.fullName = "Name is required";
     
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email.trim()) {
+    if (!email) {
       newErrors.email = "Email is required";
-      isValid = false;
-    } else if (!emailRegex.test(formData.email)) {
+    } else if (!emailRegex.test(email)) {
       newErrors.email = "Please enter a valid email address";
-      isValid = false;
     }
     
     // Phone validation
-    if (!formData.phone) {
+    if (!phone) {
       newErrors.phone = "Phone number is required";
-      isValid = false;
-    } else if (!/^\d{10}$/.test(formData.phone)) {
-      newErrors.phone = "Phone number must be exactly 10 digits";
-      isValid = false;
+    } else if (!/^\d{10}$/.test(phone)) {
+      newErrors.phone = "Phone must be exactly 10 digits";
     }
     
     // Password validation
-    if (!formData.password) {
+    if (!password) {
       newErrors.password = "Password is required";
-      isValid = false;
-    } else if (formData.password.length < 6) {
+    } else if (password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
-      isValid = false;
     }
     
     setErrors(newErrors);
-    return isValid;
+    return Object.keys(newErrors).length === 0;
   };
 
-  // Update user profile
-  const updateUserProfile = async (e) => {
+  //updateuser function
+  async function Updateuser(e) {
     e.preventDefault();
     
-    // Validate form
     if (!validateForm()) {
-      toast.error("Please correct the errors in the form");
-      // Scroll to the first error
-      const firstErrorField = Object.keys(errors).find(key => errors[key]);
-      if (firstErrorField) {
-        document.getElementById(firstErrorField)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
+      toast.error("Please fix the errors in the form");
       return;
     }
-    
+
     try {
       setFormLoading(true);
       
       // Handle image upload if there's a new image
-      let finalImageUrl = formData.imageurl;
+      let finalImageUrl = imageurl;
       if (imageFile) {
         finalImageUrl = await uploadImage(imageFile);
       }
       
-      const updateUserData = {
-        fullName: formData.fullName,
-        email: formData.email,
-        phone: formData.phone,
+      const updateuser = {
+        fullName,
+        email,
+        phone,
         imageurl: finalImageUrl,
-        password: formData.password,
+        password,
       };
 
-      await axios.put(
-        `http://localhost:3000/api/users/updateuser/${uid}`,
-        updateUserData
-      );
+      const response = (
+        await axios.put(
+          `http://localhost:3000/api/users/updateuser/${uid}`,
+          updateuser
+        )
+      ).data;
       
+      console.log("Update response:", response);
       setFormLoading(false);
       
-      // Show success message
       Swal.fire({
-        title: "Profile Updated!",
-        text: "Your profile has been successfully updated.",
+        title: "Success!",
+        text: "Profile updated successfully",
         icon: "success",
+        confirmButtonText: "Continue",
         confirmButtonColor: "#10B981"
       }).then(() => {
-        navigate(`/e_userprofile/${uid}`);
+        window.location.href = `/e_userprofile/${uid}`;
       });
     } catch (error) {
       setFormLoading(false);
-      console.error("Update error:", error);
-      toast.error(error.response?.data?.message || "Failed to update profile. Please try again.");
+      console.log("Update error:", error.response || error);
+      toast.error(error.response?.data?.message || "Failed to update profile");
     }
-  };
-
-  // Input field component
-  const FormField = ({ 
-    id, 
-    label, 
-    type = "text", 
-    name, 
-    value, 
-    placeholder, 
-    icon: Icon, 
-    error,
-    maxLength,
-    onChange = handleInputChange
-  }) => (
-    <div className="relative">
-      <label htmlFor={id} className="block text-gray-700 font-medium mb-2">
-        {label} {error && <span className="text-red-500 text-sm">*</span>}
-      </label>
-      <div className="relative">
-        <div className="absolute left-3 top-3 text-green-500">
-          <Icon aria-hidden="true" />
-        </div>
-        <input
-          id={id}
-          type={type === "password" ? (showPassword ? "text" : "password") : type}
-          name={name}
-          value={value}
-          maxLength={maxLength}
-          className={`w-full pl-10 pr-${type === "password" ? "12" : "4"} py-3 rounded-lg border ${
-            error ? "border-red-400 bg-red-50" : "border-gray-300"
-          } focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-colors duration-300`}
-          placeholder={placeholder}
-          onChange={onChange}
-          aria-invalid={error ? "true" : "false"}
-          aria-describedby={error ? `${id}-error` : undefined}
-        />
-        {type === "password" && (
-          <button
-            type="button"
-            onClick={togglePasswordVisibility}
-            className="absolute right-3 top-3 text-gray-400 hover:text-green-600 focus:outline-none focus:text-green-600"
-            aria-label={showPassword ? "Hide password" : "Show password"}
-          >
-            {showPassword ? <FaEyeSlash /> : <FaEye />}
-          </button>
-        )}
-      </div>
-      {error && (
-        <p 
-          id={`${id}-error`} 
-          className="mt-1 text-sm text-red-500 flex items-center"
-        >
-          <FaExclamationTriangle className="mr-1" />
-          {error}
-        </p>
-      )}
-    </div>
-  );
+  }
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -324,119 +199,192 @@ const Edidemployeeprofile = () => {
         <Loader />
       ) : (
         <div className="flex">
+          {/* Keep the original navbar exactly as it was */}
           <AdprofileNavbar />
-          <div className="flex flex-col w-full" style={{ zIndex: 900 }}>
-            <div data-aos="fade-up" className="w-full max-w-3xl mx-auto my-8 px-4">
-              <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-                {/* Header with back button */}
-                <div className="bg-gradient-to-r from-green-600 to-green-400 text-white p-4 flex items-center">
-                  <Link 
-                    to={`/e_userprofile/${uid}`}
-                    className="flex items-center justify-center h-8 w-8 rounded-full bg-white/20 hover:bg-white/30 transition-all mr-3"
-                    aria-label="Back to profile"
-                  >
-                    <FaArrowLeft className="text-white text-sm" />
-                  </Link>
-                  <h1 className="text-2xl font-bold">Edit Profile</h1>
+          
+          {/* Content area */}
+          <div className="flex-1">
+            {/* Back Button */}
+            <div className="px-6 pt-6">
+              <Link 
+                to={`/e_userprofile/${uid}`}
+                className="flex items-center text-green-600 hover:text-green-700 transition-colors duration-300"
+              >
+                <FaArrowLeft className="mr-2" />
+                <span>Back to Profile</span>
+              </Link>
+            </div>
+            
+            <div data-aos="fade-up" className="w-full max-w-3xl mx-auto my-6 px-4">
+              <div className="bg-white shadow-xl rounded-xl overflow-hidden border border-gray-100">
+                <div className="bg-gradient-to-r from-green-600 to-green-400 text-white p-6">
+                  <h1 className="text-2xl font-bold text-center">Edit Your Profile</h1>
+                  <p className="text-center text-green-100 mt-2">Update your personal information</p>
                 </div>
                 
-                <form onSubmit={updateUserProfile} className="p-6">
+                <form onSubmit={Updateuser} className="p-6 md:p-8">
                   {/* Profile Image Section */}
                   <div className="flex flex-col items-center mb-8">
-                    <div className="relative mb-4">
-                      <img
-                        className="h-32 w-32 rounded-full object-cover border-4 border-green-100 shadow-md"
-                        src={previewImage || "https://via.placeholder.com/150"}
-                        alt="Profile"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = "https://via.placeholder.com/150";
-                        }}
-                      />
+                    <div className="relative mb-4 group">
+                      <div className="h-36 w-36 rounded-full overflow-hidden border-4 border-green-100 shadow-md transition-transform duration-300 group-hover:scale-105">
+                        <img
+                          className="h-full w-full object-cover"
+                          src={previewImage || imageurl || "https://via.placeholder.com/150"}
+                          alt="Profile"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "https://via.placeholder.com/150";
+                          }}
+                        />
+                      </div>
                       <label
                         htmlFor="file-upload"
-                        className="absolute bottom-0 right-0 bg-green-500 hover:bg-green-600 text-white p-2 rounded-full cursor-pointer shadow-md transition-all duration-300 ease-in-out transform hover:scale-110"
-                        aria-label="Change profile picture"
+                        className="absolute bottom-0 right-0 bg-green-500 hover:bg-green-600 text-white p-3 rounded-full cursor-pointer shadow-md transition-all duration-300 ease-in-out transform hover:scale-110"
                       >
                         <FaPencilAlt className="h-4 w-4" />
+                        <span className="sr-only">Change profile picture</span>
                       </label>
                       <input
                         id="file-upload"
                         type="file"
-                        accept="image/jpeg, image/png, image/jpg, image/gif"
+                        accept="image/*"
                         className="hidden"
                         onChange={handleImageChange}
-                        aria-label="Upload profile picture"
                       />
                     </div>
-                    <p className="text-sm text-gray-500">
-                      Click the pencil icon to change your profile picture
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      Supported formats: JPEG, PNG, GIF (max 5MB)
-                    </p>
+                    <p className="text-sm text-gray-500">Click the icon to update your profile picture</p>
+                    {imageFile && (
+                      <p className="text-xs text-green-600 mt-1">New image selected: {imageFile.name}</p>
+                    )}
                   </div>
                   
                   {/* Form Fields */}
                   <div className="space-y-6">
-                    <FormField
-                      id="fullName"
-                      label="Full Name"
-                      name="fullName"
-                      value={formData.fullName}
-                      placeholder="Enter your full name"
-                      icon={FaUser}
-                      error={errors.fullName}
-                    />
+                    {/* Name Field */}
+                    <div className="relative">
+                      <label className="block text-gray-700 font-medium mb-2">Full Name</label>
+                      <div className="relative">
+                        <div className="absolute left-3 top-3 text-green-500">
+                          <FaUser />
+                        </div>
+                        <input
+                          type="text"
+                          value={fullName}
+                          className={`w-full pl-10 pr-4 py-3 rounded-lg border ${errors.fullName ? 'border-red-300 bg-red-50' : 'border-gray-300'} focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-colors duration-300`}
+                          placeholder="Enter your full name"
+                          onChange={(e) => {
+                            setname(e.target.value);
+                            if (errors.fullName) {
+                              setErrors({...errors, fullName: null});
+                            }
+                          }}
+                        />
+                      </div>
+                      {errors.fullName && (
+                        <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>
+                      )}
+                    </div>
                     
-                    <FormField
-                      id="email"
-                      label="Email Address"
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      placeholder="Enter your email"
-                      icon={FaEnvelope}
-                      error={errors.email}
-                    />
+                    {/* Email Field */}
+                    <div className="relative">
+                      <label className="block text-gray-700 font-medium mb-2">Email Address</label>
+                      <div className="relative">
+                        <div className="absolute left-3 top-3 text-green-500">
+                          <FaEnvelope />
+                        </div>
+                        <input
+                          type="email"
+                          value={email}
+                          className={`w-full pl-10 pr-4 py-3 rounded-lg border ${errors.email ? 'border-red-300 bg-red-50' : 'border-gray-300'} focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-colors duration-300`}
+                          placeholder="Enter your email"
+                          onChange={(e) => {
+                            setemail(e.target.value);
+                            if (errors.email) {
+                              setErrors({...errors, email: null});
+                            }
+                          }}
+                        />
+                      </div>
+                      {errors.email && (
+                        <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                      )}
+                    </div>
                     
-                    <FormField
-                      id="phone"
-                      label="Phone Number"
-                      name="phone"
-                      value={formData.phone}
-                      placeholder="Enter your 10-digit phone number"
-                      maxLength={10}
-                      icon={FaPhone}
-                      error={errors.phone}
-                    />
+                    {/* Phone Field */}
+                    <div className="relative">
+                      <label className="block text-gray-700 font-medium mb-2">Phone Number</label>
+                      <div className="relative">
+                        <div className="absolute left-3 top-3 text-green-500">
+                          <FaPhone />
+                        </div>
+                        <input
+                          type="text"
+                          maxLength={10}
+                          value={phone}
+                          className={`w-full pl-10 pr-4 py-3 rounded-lg border ${errors.phone ? 'border-red-300 bg-red-50' : 'border-gray-300'} focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-colors duration-300`}
+                          placeholder="Enter your 10-digit phone number"
+                          onChange={(e) => {
+                            // Only allow digits
+                            const value = e.target.value.replace(/\D/g, '');
+                            setphone(value);
+                            if (errors.phone) {
+                              setErrors({...errors, phone: null});
+                            }
+                          }}
+                        />
+                      </div>
+                      {errors.phone && (
+                        <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+                      )}
+                    </div>
                     
-                    <FormField
-                      id="password"
-                      label="Password"
-                      type="password"
-                      name="password"
-                      value={formData.password}
-                      placeholder="Enter your password"
-                      icon={FaLock}
-                      error={errors.password}
-                    />
+                    {/* Password Field */}
+                    <div className="relative">
+                      <label className="block text-gray-700 font-medium mb-2">Password</label>
+                      <div className="relative">
+                        <div className="absolute left-3 top-3 text-green-500">
+                          <FaLock />
+                        </div>
+                        <input
+                          type={showPasswords ? "text" : "password"}
+                          value={password}
+                          className={`w-full pl-10 pr-12 py-3 rounded-lg border ${errors.password ? 'border-red-300 bg-red-50' : 'border-gray-300'} focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-colors duration-300`}
+                          placeholder="Enter your password"
+                          onChange={(e) => {
+                            setPassword(e.target.value);
+                            if (errors.password) {
+                              setErrors({...errors, password: null});
+                            }
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={togglePasswordVisibility_1}
+                          className="absolute right-3 top-3 text-gray-400 hover:text-green-600 focus:outline-none"
+                          aria-label={showPasswords ? "Hide password" : "Show password"}
+                        >
+                          {showPasswords ? <FaEyeSlash /> : <FaEye />}
+                        </button>
+                      </div>
+                      {errors.password && (
+                        <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                      )}
+                      <p className="text-xs text-gray-500 mt-1">Password should be at least 6 characters long</p>
+                    </div>
                   </div>
                   
-                  {/* Form Actions */}
-                  <div className="mt-8 flex flex-col sm:flex-row justify-center sm:justify-between gap-4">
+                  {/* Submit and Cancel Buttons */}
+                  <div className="mt-8 flex justify-center gap-4">
                     <Link
                       to={`/e_userprofile/${uid}`}
-                      className="flex items-center justify-center gap-2 border border-gray-300 text-gray-700 font-medium py-3 px-8 rounded-full shadow-sm transition-all duration-300 ease-in-out hover:bg-gray-50 hover:shadow order-2 sm:order-1 w-full sm:w-auto"
+                      className="flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-8 rounded-lg transition-all duration-300 ease-in-out"
                     >
-                      <FaArrowLeft className="h-4 w-4" />
-                      <span>Cancel</span>
+                      Cancel
                     </Link>
-                    
                     <button
                       type="submit"
                       disabled={formLoading}
-                      className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-8 rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none order-1 sm:order-2 w-full sm:w-auto"
+                      className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-8 rounded-lg shadow-lg transition-all duration-300 ease-in-out transform hover:translate-y-px disabled:opacity-70 disabled:cursor-not-allowed"
                     >
                       {formLoading ? (
                         <>
@@ -445,7 +393,7 @@ const Edidemployeeprofile = () => {
                         </>
                       ) : (
                         <>
-                          <FaSave className="h-4 w-4" />
+                          <FaSave />
                           <span>Save Changes</span>
                         </>
                       )}
@@ -454,15 +402,13 @@ const Edidemployeeprofile = () => {
                 </form>
               </div>
               
-              {/* Instructions card */}
-              <div className="mt-6 bg-blue-50 border border-blue-100 rounded-lg p-4 text-blue-800 text-sm">
-                <h3 className="font-semibold mb-2 flex items-center">
-                  <FaUser className="mr-2" /> Profile Update Tips
-                </h3>
-                <ul className="list-disc pl-5 space-y-1">
-                  <li>Use a professional photo for your profile picture</li>
-                  <li>Ensure your contact information is up to date</li>
-                  <li>Choose a strong password for better security</li>
+              {/* Tips Section */}
+              <div className="mt-6 bg-white p-4 rounded-lg shadow border border-gray-100">
+                <h3 className="text-green-600 font-medium mb-2">Profile Tips</h3>
+                <ul className="text-sm text-gray-600 space-y-1">
+                  <li>• Use a clear, professional photo for your profile picture</li>
+                  <li>• Ensure your email address is current and accessible</li>
+                  <li>• Keep your contact information up to date</li>
                 </ul>
               </div>
             </div>
