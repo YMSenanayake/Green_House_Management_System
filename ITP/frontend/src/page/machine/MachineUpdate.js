@@ -1,166 +1,181 @@
-import React, { useEffect, useState, } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Adminnavbar from "./Component/Adminnavbar";
+import Swal from "sweetalert2";
+import Loader from "../../components/header/Loader";
+import { useParams } from "react-router-dom";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
-import { StyleSheet, pdf, Font, Page, Text, View, Document } from '@react-pdf/renderer';
-import Adminnavbar from './Component/Adminnavbar'
+const MachineUpdate = () => {
+  const { mid } = useParams();
 
+  const [id, setId] = useState("");
+  const [name, setName] = useState("");
+  const [cost, setCost] = useState("");
+  const [parts, setParts] = useState("");
+  const [discription, setDescription] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [location, setLocation] = useState("");
+  const [lastRepairDate, setLastRepairDate] = useState(new Date());
+  const[repairTimePeriod,setperiod] = useState('');
 
-export function MachineUpdate(){
+  useEffect(() => {
+    async function getMachine() {
+      try {
+        setLoading(true);
+        const response = (await axios.get(`http://localhost:5000/api/machines/getMachine/${mid}`)).data;
+        console.log(response.machine)
+        setId(response.machine._id);
+        setName(response.machine.name);
+        setCost(response.machine.cost);
+        setParts(response.machine.parts);
+        setDescription(response.machine.discription);
+        setLocation(response.machine.location);
+        setLastRepairDate(response.machine.lastRepairDate);
+        setperiod(response.machine.repairTimePeriod);
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+        console.log(error);
+      }
+    }
+    getMachine();
+  }, [mid]);
 
-    const [machine, setMachine] = React.useState([]);
-    const [duplicateusers, setduplicateusers] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const fetchData = async () => {
-        try {
-          setLoading(true)
-          const data = await axios.get(
-            "http://localhost:3000/api/machines/getallmachines"
-          );
-          setMachine(data.data);
-          setduplicateusers(data.data); // Update duplicateusers with fetched data
-          setLoading(false)
-        } catch (error) {
-          console.log(error);
-          setLoading(false)
-        }
-      };
-    
-      useEffect(() => {
-        fetchData();
-      }, []);
-
-
-    const generatePDF = () => {
-      Font.register({ family: 'Roboto', src: 'https://cdnjs.cloudflare.com/ajax/libs/roboto/22.0.2/fonts/Roboto/roboto-regular.ttf' });
-
-      const styles = StyleSheet.create({
-        page: {
-          padding: 30,
-        },
-        section: {
-          marginBottom: 10,
-        },
-        table: {
-          display: 'table',
-          width: '100%',
-          borderStyle: 'solid',
-          borderWidth: 1,
-          borderColor: '#000',
-          marginBottom: 10,
-        },
-        tableRow: {
-          flexDirection: 'row',
-        },
-        tableCell: {
-          flex: 1,
-          padding: 5,
-          borderStyle: 'solid',
-          borderWidth: 1,
-          borderColor: '#000',
-        },
-        tableHeader: {
-          backgroundColor: '#f0f0f0',
-        },
-      });
-
-      const MyDocument = (
-        <Document>
-          <Page size="A4" style={styles.page}>
-            <View style={styles.section}>
-              <Text>Machine List</Text>
-            </View>
-            <View style={styles.table}>
-              <View style={[styles.tableRow, styles.tableHeader]}>
-                <Text style={[styles.tableCell]}>Name</Text>
-                <Text style={[styles.tableCell]}>Cost of the Machine</Text>
-                <Text style={[styles.tableCell]}>Machine Parts</Text>
-                <Text style={[styles.tableCell]}>Machine Description</Text>
-              </View>
-              {machine.map((machine, index) => (
-                <View key={index} style={styles.tableRow}>
-                  <Text style={styles.tableCell}>{machine.name}</Text>
-                  <Text style={styles.tableCell}>{machine.cost.join(', ')}</Text>
-                  <Text style={styles.tableCell}>{machine.parts.join(', ')}</Text>
-                  <Text style={styles.tableCell}>{machine.discription}</Text>
-                </View>
-              ))}
-            </View>
-          </Page>
-        </Document>
-      );
-
-      pdf(MyDocument).toBlob().then((blob) => {
-        // Download the generated PDF
-        const url = window.URL.createObjectURL(new Blob([blob]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'machines.pdf');
-        document.body.appendChild(link);
-        link.click();
-      });
+  const updateMachine = async (e) => {
+    e.preventDefault();
+    const updatedMachine = {
+      name,
+      cost,
+      parts,
+      discription,
+      location ,
+      lastRepairDate,
+      repairTimePeriod
     };
+    try {
+      setLoading(true);
+      await axios.put(`http://localhost:3000/api/machines/updateMachine/${mid}`, updatedMachine);
+      setLoading(false);
+      Swal.fire("Success", "Machine updated successfully", "success").then(() => {
+        window.location.href = "/m_machine"; // Redirect to machine list page after successful update
+      });
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+      Swal.fire("Error", "Failed to update machine", "error");
+    }
+  };
 
-    return (
-      <div className="bg -">
-        <div className="flex">
-    {/* Side Navigation */}
-    <Adminnavbar />
+  return (
+    <div>
+      {loading ? (
+        <Loader />
+      ) : (
+        <div className="bg-wight-green">
+      <div className="flex">
+        <Adminnavbar />
+        <div className="flex flex-col px-12 py-12 justify-center " style={{ zIndex: 900 }}>
+        <h1>Update Machine</h1>
+        <form onSubmit={updateMachine} className=" px-12 py-30s justify-center">
+  <div className="mb-5">
+    <label htmlFor="name" className="mb-3 block text-base font-medium text-[#07074D]">
+      Name
+    </label>
+    <input
+      type="text"
+      value={name}
+      onChange={(e) => setName(e.target.value)}
+      className="w-full rounded-md border border-[#e0e0e0] bg-white focus:outline-whatsapp-green py-3 px-6 text-base font-medium text-[#6B7280]"
+      required
+    />
+  </div>
+  <div className="mb-5">
+    <label htmlFor="cost" className="mb-3 block text-base font-medium text-[#07074D]">
+      Cost
+    </label>
+    <input
+      type="text"
+      value={cost}
+      onChange={(e) => setCost(e.target.value)}
+      className="w-full rounded-md border border-[#e0e0e0] bg-white focus:outline-whatsapp-green py-3 px-6 text-base font-medium text-[#6B7280]"
+      required
+    />
+  </div>
+  <div className="mb-5">
+    <label htmlFor="parts" className="mb-3 block text-base font-medium text-[#07074D]">
+      Parts
+    </label>
+    <input
+      type="text"
+      value={parts}
+      onChange={(e) => setParts(e.target.value)}
+      className="w-full rounded-md border border-[#e0e0e0] bg-white focus:outline-whatsapp-green py-3 px-6 text-base font-medium text-[#6B7280]"
+      required
+    />
+  </div>
+  <div className="mb-5">
+    <label htmlFor="description" className="mb-3 block text-base font-medium text-[#07074D]">
+      Description
+    </label>
+    <input
+      type="text"
+      value={discription}
+      onChange={(e) => setDescription(e.target.value)}
+      className="w-full rounded-md border border-[#e0e0e0] bg-white focus:outline-whatsapp-green py-3 px-6 text-base font-medium text-[#6B7280]"
+      required
+    />
+  </div>
+  <div className="mb-5">
+                  <label htmlFor="location" className="mb-3 block text-base font-medium text-[#07074D]">
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    className="w-full rounded-md border border-[#e0e0e0] bg-white focus:outline-whatsapp-green py-3 px-6 text-base font-medium text-[#6B7280]"
+                    required
+                  />
+                </div>
 
-        
-<div className="p-5 b-3 justify-center">
-<table
-  data-aos="zoom out"
-  className="w-5/6 text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 p-4 "
->
-  <thead className="text-xs text-whatsapp-green uppercase bg-wight-green dark:bg-whatsapp-green dark:text-wight-greentext-xs text-whatsapp-green uppercase bg-wight-green dark:bg-whatsapp-green dark:text-wight-green">
-    <tr>
-      <th scope="col" className="px-6 py-3 text-center">
-        Name
-      </th>
-      <th scope="col" className="px-6 py-3 text-center">
-        Cost of the Machine
-      </th>
-      <th scope="col" className="px-6 py-3 text-center">
-        Machine Parts
-      </th>
-      <th scope="col" className="px-6 py-3 text-center">
-        Machine Details
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    {machine.length > 0 ? (
-      machine.map((machine, index) => (
-        <tr
-          key={index}
-          className="bg-green-50 green:bg-table-row hover:tablerow-hover dark:hover:bg-tablerow-hover px-6 py-3"
-        >
-          <td className="px-6 py-4 text-green-900 left-0">{machine.name}</td>
-          <td className="px-6 py-4 text-green-900 left-0">{machine.cost.join(', ')}</td>
-          <td className="px-6 py-4 text-green-900 left-0">{machine.parts.join(', ')}</td>
-          <td className="px-6 py-4 text-green-900 left-0">{machine.discription}</td>
-        </tr>
-      ))
-    ) : (
-      <tr>
-        <td colSpan="3" className="text-center py-4 text-red-500">
-          Machines not found.
-        </td>
-      </tr>
-    )}
-  </tbody>
-</table>
+                <div>
+<DatePicker
+  selected={lastRepairDate}
+  onChange={(date) => setLastRepairDate(date)}
+  dateFormat="dd/MM/yyyy" // Adjust the date format as needed
+/>
 </div>
 
-        <div className="flex items-center justify-end h-full  w-1/6 mr-20">
-          <button
-            onClick={generatePDF}
-            className="text-white bg-whatsapp-green hover:bg-Buttongreen focus:outline-none focus:ring-4 focus:ring-Buttongreen font-medium rounded-full text-me px-5 py-2.5 text-center me-2 mb-2 dark:whatsapp-green dark:hover:bg-Buttongreen dark:focus:ring-Buttongreen font-sans shadow-xl max-w-md mx-auto"
-          >
-            Generate PDF
-          </button>
+<div>
+      <input
+        type="text"
+        placeholder="repair time period"
+        value={repairTimePeriod}
+        onChange={(e) => setperiod(e.target.value)}
+        className="mt-1 p-2 block w-full rounded-3xl dark:bg-table-row border-none focus:outline-whatsapp-green placeholder-gray-500 placeholder-opacity-50 font-custom text-md"
+        required
+      />
+    </div>
+  <div className="flex justify-center">
+    <button
+      type="submit"
+      className="mt-4 p-3 md:w-96 text-white bg-dark hover:bg-darkhover font-custom text-md rounded-xl transition-transform duration-300 ease-in-out transform hover:scale-110"
+    >
+      Update
+    </button>
+  </div>
+</form>
+
+
+
+        </div>   
+          </div>
         </div>
-      </div>
-      </div>
-    );
-}
+      )}
+    </div>
+  );
+};
+
+export default MachineUpdate;

@@ -4,7 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import React from "react";
 
 import Machine from "./page/machine/Machine";
-import {MachineUpdate} from "./page/machine/MachineUpdate";
+import MachineUpdate from "./page/machine/MachineUpdate";
 import {MachinePdf} from "./page/machine/MachinePdf";
 import {MVehicle} from "./page/machine/MVehicle";
 import Machinedashboard from "./page/machine/Machinedashboard";
