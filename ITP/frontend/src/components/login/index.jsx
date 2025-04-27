@@ -32,7 +32,7 @@ function LoginForm(){
 
                 switch(role){
                     case "User":
-                        navigate("/e_allusers");
+                        navigate("/cartHome");
                         break;
                     case "Employee manager":
                         navigate("/employeeDashboard");
