@@ -53,7 +53,7 @@ function LoginForm(){
                         navigate("/fhinancialdashboard");
                         break;
                     case "Machine manager":
-                        navigate("/machinedashboard");   
+                        navigate("/m_machinedashboard");   
                         break; 
                         default:
                             console.error("Unsupported role:", role);
