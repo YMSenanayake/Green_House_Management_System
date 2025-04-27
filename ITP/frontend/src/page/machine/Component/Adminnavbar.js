@@ -34,7 +34,7 @@ function Adminnavbar() {
   ];
   
   return (
-    <div className="bg-gradient-to-b from-green-50 to-green-100 h-screen w-64 fixed top-0 left-0 flex flex-col justify-between shadow-lg border-r border-green-200">
+    <div className="bg-gradient-to-b from-green-50 to-green-100 h-screen w-60 fixed top-0 left-0 flex flex-col justify-between shadow-lg border-r border-green-200">
       <div className="flex flex-col items-center pt-8 pb-8 border-b border-green-200">
         {/* Profile button - circular */}
         <Link to={`/e_profile_dashboard`} className="mb-4">
