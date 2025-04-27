@@ -57,7 +57,7 @@ function Homepage() {
               >
                 Online Green House Management System
               </div>
-              <Link to="/c_displayitem">
+              <Link to="/cartHome">
                 <button
                   data-aos="zoom out"
                   className="relative justify-center px-12 py-4 mt-10 text-xl tracking-widest text-center rounded-3xl border-solid bg-white bg-opacity-40 border-neutral-200 max-md:px-5 max-md:my-10"

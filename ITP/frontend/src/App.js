@@ -43,10 +43,13 @@ import Cart from './page/cart/Cart';
 import AddAddress from './page/cart/AddAddress';
 import MyOrders from './page/cart/MyOrders';
 import Loading from './components/cart/Loading';
+import Footer from './components/cart/Footer';
 
 function App() {
+  const location = useLocation();
   const isSellerPath = useLocation().pathname.includes("seller");
   const {showUserLogin, isSeller} = useAppContext()
+  const isCartPath = ['/cartHome', '/products', '/cart', '/add-address', '/my-orders', '/loader'].includes(location.pathname) || location.pathname.startsWith('/products/');
   return (
 
    <div>
@@ -83,11 +86,12 @@ function App() {
 
 
       </Routes>
+      {isCartPath && (
       <div className='text-default min-h-screen text-gray-700 bg-white '>
-      {isSellerPath ? null : <Navbar/>} 
+      { isSellerPath ? null : <Navbar/>} 
       {showUserLogin ? <Login/> : null}
       <Toaster />
-        <div className={`${isSellerPath ? "" : "px-6 md:px-16 lg:px-24 xl:px-32"}`}>
+        <div className={`  ${isSellerPath ? "" : "px-6 md:px-16 lg:px-24 xl:px-32"}`}>
           <Routes>
             
               <Route path='/cartHome' element={<CartHome/>} />
@@ -100,9 +104,10 @@ function App() {
               <Route path='/loader' element={<Loading/>} />
              
             </Routes>
+             { !isSellerPath && <Footer/>}
           </div>
       </div>
-      {/* {!isSellerPath && <Footer/>} */}
+      )}
   
   </div>
 
