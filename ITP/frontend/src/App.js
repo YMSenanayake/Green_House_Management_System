@@ -1,5 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 
 
@@ -22,11 +24,20 @@ import FinancePage from './page/financial/FinanceDashboard';
 import FinanceAdd from './page/financial/FinanceAdd';
 import FInancialList from './page/financial/FinanceList';
 
+import Machine from "./page/machine/Machine";
+import MachineUpdate from "./page/machine/MachineUpdate";
+import {MachinePdf} from "./page/machine/MachinePdf";
+import {MVehicle} from "./page/machine/MVehicle";
+import Machinedashboard from "./page/machine/Machinedashboard";
+
 
 
 function App() {
   return (
      <Router>
+
+       <ToastContainer position="top-center" autoClose={3000} />
+
       <Routes>
       <Route path="/" element={<Homepage/>}/>
         <Route path="/signin" element={<SignIn />} />
@@ -46,6 +57,12 @@ function App() {
         <Route path="/fhinancialdashboard" element={<FinancePage/>}/>
         <Route path="/addfinacial" element={<FinanceAdd/>}/>
         <Route path="/financialist" element={<FInancialList/>}/>
+
+        <Route path="/m_machine" element={<Machine />} />
+          <Route path="/m_update/:mid" element={<MachineUpdate />} />
+          <Route path="/m_MachinePdf" element={<MachinePdf />} />
+          <Route path="/m_MVehicle" element={<MVehicle />} />
+          <Route path="/m_machinedashboard" element={<Machinedashboard />} />
 
       </Routes>
     </Router>

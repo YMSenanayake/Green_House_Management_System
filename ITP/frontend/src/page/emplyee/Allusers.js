@@ -155,15 +155,16 @@ function Allusers() {
     }
   };
 
-  // Search and filter
+  // FIXED Search and filter function
   const filterBySearch = () => {
     const filteredBySearch = duplicateUsers.filter((user) =>
+      user && user.fullName && 
       user.fullName.toLowerCase().includes(searchKey.toLowerCase())
     );
 
     if (type !== "all") {
       const filteredByTypeAndSearch = filteredBySearch.filter(
-        (user) => user.role && user.role.toLowerCase().includes(type)
+        (user) => user && user.role && user.role.toLowerCase().includes(type)
       );
       setUsers(filteredByTypeAndSearch);
     } else {
@@ -181,7 +182,7 @@ function Allusers() {
 
     if (selectedType !== "all") {
       const filtered = duplicateUsers.filter(
-        (user) => user.role && user.role.toLowerCase().includes(selectedType)
+        (user) => user && user.role && user.role.toLowerCase().includes(selectedType)
       );
       setUsers(filtered);
     } else {
