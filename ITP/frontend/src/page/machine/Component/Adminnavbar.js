@@ -1,47 +1,74 @@
 import React from "react";
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from "react-router-dom";
 import { LuLayoutDashboard } from "react-icons/lu";
-import { GiGreenhouse } from "react-icons/gi";
-import { IoMdContacts } from 'react-icons/io';
-import logo from '../../../Images/logo.png';
-import Navbar from "../../../components/header/Navbar";
+import { GiExitDoor } from "react-icons/gi";
+import { FaUsers } from "react-icons/fa";
+import { FaUserClock } from "react-icons/fa6";
+import { FaUserCircle } from "react-icons/fa";
+
 
 function Adminnavbar() {
   const location = useLocation();
+  
+  const user = JSON.parse(localStorage.getItem("currentuser"));
 
+  function Logout() {
+    localStorage.removeItem("currentuser");
+    localStorage.removeItem("user:detail");
+    window.location.href = "/";
+  }
+
+  
+  const navItems = [
+    {
+      path: "/m_machinedashboard",
+      icon: <LuLayoutDashboard className="text-xl" />,
+      label: "Dashboard"
+    },
+    {
+      path: "/m_machine",
+      icon: <FaUsers className="text-xl" />,
+      label: "Machine"
+    },
+   
+  ];
+  
   return (
-    <div className="bg-wight-green text-white sticky top-0 left-0 flex flex-col justify-between shadow-xl min-w-[240px] h-screen" style={{ width: '240px' }}>
-    <div className="p-4">
-       <Navbar/>
-        <Link
-          to="/m_machinedashboard"
-          className={`flex items-center w-full py-3 px-4 ${location.pathname === "/m_machinedashboard" ? 'bg-whatsapp-green text-white' : 'hover:bg-whatsapp-green text-green-900'} font-custom rounded-md text-decoration-none mb-2`}
-        >
-          <LuLayoutDashboard className="mr-5 text-lg" />
-          <span className="font-bold text-lg">Dash Board</span>
+    <div className="bg-gradient-to-b from-green-50 to-green-100 h-screen w-64 fixed top-0 left-0 flex flex-col justify-between shadow-lg border-r border-green-200">
+      <div className="flex flex-col items-center pt-8 pb-8 border-b border-green-200">
+        {/* Profile button - circular */}
+        <Link to={`/e_profile_dashboard`} className="mb-4">
+          <div className="w-16 h-16 rounded-full bg-green-600 flex items-center justify-center text-white shadow-md hover:bg-green-700 transition-all duration-200">
+            <FaUserCircle className="text-3xl" />
+          </div>
         </Link>
-        <Link
-          to="/m_machine"
-          className={`flex items-center w-full py-3 px-4 ${location.pathname === "/e_allusers" ? 'bg-whatsapp-green text-white' : 'hover:bg-whatsapp-green text-green-900'} font-custom rounded-md text-decoration-none mb-2`}
-        >
-          <GiGreenhouse className="mr-5 text-lg" />
-          <span className="font-bold text-lg">Machine</span>
-        </Link>
-
-        {/* <Link
-          to="/m_MVehical"
-          className={`flex items-center w-full py-3 px-4 ${location.pathname === "/e_allusers" ? 'bg-whatsapp-green text-white' : 'hover:bg-whatsapp-green text-green-900'} font-custom rounded-md text-decoration-none mb-2`}
-        >
-          <GiGreenhouse className="mr-5 text-lg" />
-          <span className="font-bold text-lg">Vehicles</span>
-        </Link> */}
-        
+        <span className="text-green-800 font-medium">My Profile</span>
       </div>
-      <div className="p-4">
-        <div className="flex justify-center items-center mt-4 mr-5">
-          <img src={logo} alt="Logo" />
-        </div>
-        <p className="text-gray-400 ml-6">&copy; 2025 GreenGrow </p>
+
+      <div className="flex-grow overflow-y-auto px-4 py-6">
+        <nav>
+          {navItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`flex items-center rounded-lg mb-10 px-4 py-3 transition-all duration-200 ${
+                location.pathname === item.path
+                  ? 'bg-green-600 text-white shadow-md' 
+                  : 'text-green-800 hover:bg-green-500 hover:text-white'
+              }`}
+            >
+              <span className="mr-3">{item.icon}</span>
+              <span className="font-medium">{item.label}</span>
+              {location.pathname === item.path && (
+                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-white"></span>
+              )}
+            </Link>
+          ))}
+        </nav>
+      </div>
+
+      <div className="p-4 border-t border-green-200">
+        <p className="text-green-700 text-sm font-medium text-center">&copy; 2025 GreenGrow</p>
       </div>
     </div>
   );
