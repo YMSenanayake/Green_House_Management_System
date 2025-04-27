@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -31,10 +31,26 @@ import {MVehicle} from "./page/machine/MVehicle";
 import Machinedashboard from "./page/machine/Machinedashboard";
 
 
+import { useAppContext } from './context/AppContext';
+import Navbar from "./components/cart/Navbar";
+import Login from "./components/cart/Login"
+import CartHome from './page/cart/Home'
+import { Toaster } from "react-hot-toast";
+import AllProducts from './page/cart/AllProducts';
+import ProductCategory from './page/cart/ProductCategory';
+import ProductDetails from './page/cart/ProductDetails';
+import Cart from './page/cart/Cart';
+import AddAddress from './page/cart/AddAddress';
+import MyOrders from './page/cart/MyOrders';
+import Loading from './components/cart/Loading';
 
 function App() {
+  const isSellerPath = useLocation().pathname.includes("seller");
+  const {showUserLogin, isSeller} = useAppContext()
   return (
-     <Router>
+
+   <div>
+       
 
        <ToastContainer position="top-center" autoClose={3000} />
 
@@ -64,8 +80,33 @@ function App() {
           <Route path="/m_MVehicle" element={<MVehicle />} />
           <Route path="/m_machinedashboard" element={<Machinedashboard />} />
 
+
+
       </Routes>
-    </Router>
+      <div className='text-default min-h-screen text-gray-700 bg-white '>
+      {isSellerPath ? null : <Navbar/>} 
+      {showUserLogin ? <Login/> : null}
+      <Toaster />
+        <div className={`${isSellerPath ? "" : "px-6 md:px-16 lg:px-24 xl:px-32"}`}>
+          <Routes>
+            
+              <Route path='/cartHome' element={<CartHome/>} />
+              <Route path='/products' element={<AllProducts/>} />
+               <Route path='/products/:category' element={<ProductCategory/>} />
+              <Route path='/products/:category/:id' element={<ProductDetails/>} />
+              <Route path='/cart' element={<Cart/>} />
+              <Route path='/add-address' element={<AddAddress/>} />
+              <Route path='/my-orders' element={<MyOrders/>} />
+              <Route path='/loader' element={<Loading/>} />
+             
+            </Routes>
+          </div>
+      </div>
+      {/* {!isSellerPath && <Footer/>} */}
+  
+  </div>
+
+    
   );
 }
 
