@@ -37,15 +37,6 @@ function LoginForm(){
                     case "Employee manager":
                         navigate("/employeeDashboard");
                         break;
-                    case "Tunnel manager":
-                        navigate("/tunneldashboard");
-                        break;     
-                    case "Courior servise":
-                        navigate("/curiorservisedashboard");
-                        break;
-                    case "Target manager":
-                        navigate("/targetsdashboard");
-                        break;
                     case "Inventory manager":
                         navigate("/inventorydashboard");
                         break;
