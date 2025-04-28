@@ -152,7 +152,7 @@ function Employeedashboard() {
     "#0e7490", 
   ];
 
-  // Generate a color for a role, using predefined if available, or from fallback array if not
+  // Generate a color for a role
   const getColorForRole = (role, index, isHover = false) => {
     if (isHover) {
       return ROLE_HOVER_COLORS[role] || FALLBACK_COLORS[index % FALLBACK_COLORS.length];
@@ -162,7 +162,7 @@ function Employeedashboard() {
 
   // Get color for status
   const getColorForStatus = (status) => {
-    return STATUS_COLORS[status] || "#6b7280"; // Default to gray
+    return STATUS_COLORS[status] || "#6b7280"; 
   };
 
   // Format date function to handle various date formats
@@ -209,8 +209,8 @@ function Employeedashboard() {
             hoverBackgroundColor: roles.map((role, index) => getColorForRole(role, index, true)),
             borderColor: "white",
             borderWidth: 2,
-            borderRadius: 6, // Rounded pie segments
-            hoverOffset: 10, // Larger hover effect
+            borderRadius: 6, 
+            hoverOffset: 10, 
           },
         ],
       });
@@ -556,8 +556,8 @@ function Employeedashboard() {
                                       borderColor: '#ffffff'
                                     }
                                   },
-                                  cutout: '0%', // Standard pie chart (no hole)
-                                  radius: '90%', // Slightly smaller to fit better
+                                  cutout: '0%', 
+                                  radius: '90%',
                                   animation: {
                                     animateScale: true,
                                     animateRotate: true,
