@@ -15,6 +15,7 @@ import Adminnavbar from "./Component/Adminnavbar";
 export function MachinePdf() {
   const [machine, setMachine] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showNavbar, setShowNavbar] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -224,7 +225,7 @@ export function MachinePdf() {
           )}
 
           <Text style={styles.footer}>
-            © {new Date().getFullYear()} Company Name - Machine Inventory System - CONFIDENTIAL
+            © {new Date().getFullYear()} GreenGrow - Machine Inventory System - CONFIDENTIAL
           </Text>
           
           <Text
@@ -248,14 +249,29 @@ export function MachinePdf() {
       });
   };
 
+  const toggleNavbar = () => {
+    setShowNavbar(!showNavbar);
+  };
+
   return (
     <div className="bg-green-50 min-h-screen">
       <div className="flex">
-        {/* Side Navigation */}
-        <Adminnavbar />
+        {/* Side Navigation - Hidden by default */}
+        {showNavbar && <Adminnavbar />}
 
         {/* Main Table Section */}
-        <div className="flex flex-col flex-1 p-8">
+        <div className="flex flex-col flex-1 p-4">
+          {/* Toggle Navbar Button */}
+          <div className="flex justify-between items-center mb-4">
+            <button 
+              onClick={toggleNavbar}
+              className="text-green-600 hover:text-green-800 focus:outline-none"
+            >
+              {showNavbar ? "Hide Menu" : "Show Menu"}
+            </button>
+            <div className="text-green-800 font-bold text-lg">GreenGrow Machine Inventory</div>
+          </div>
+
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm text-left text-gray-800 border border-green-200 shadow-lg rounded-md overflow-hidden">
               <thead className="text-xs text-white uppercase bg-green-600">
@@ -271,7 +287,7 @@ export function MachinePdf() {
                   machine.map((machine, index) => (
                     <tr
                       key={index}
-                      className="bg-white even:bg-green-100 hover:bg-green-200 transition"
+                      className={index % 2 === 0 ? "bg-white hover:bg-green-200 transition" : "bg-green-100 hover:bg-green-200 transition"}
                     >
                       <td className="px-6 py-4 text-center font-medium">{machine.name}</td>
                       <td className="px-6 py-4 text-center">{machine.cost.join(", ")}</td>
@@ -298,6 +314,11 @@ export function MachinePdf() {
             >
               Generate PDF
             </button>
+          </div>
+          
+          {/* Footer */}
+          <div className="text-center text-gray-500 text-xs mt-8">
+            © 2025 GreenGrow
           </div>
         </div>
       </div>
