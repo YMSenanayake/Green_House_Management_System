@@ -4,7 +4,6 @@ import axios from 'axios';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import Loader from "../../components/header/Loader";
-import logo from "./../../components/login/logo.png";
 import bgimg1 from '../emplyee/image/bgimg1.png';
 import Swal from "sweetalert2";
 import { FiMail, FiLock } from 'react-icons/fi';

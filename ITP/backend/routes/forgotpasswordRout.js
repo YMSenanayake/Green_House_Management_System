@@ -33,8 +33,8 @@ router.post("/forgot-password", async (req, res) => {
     });
     
     var mailOptions = {
-        from: 'greengrow891@gmail.com', // Updated sender email
-        to: email, // Send to the user's email address from request
+        from: 'greengrow891@gmail.com', 
+        to: email,
         subject: 'Password Reset',
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e5e5; border-radius: 5px;">
@@ -72,7 +72,7 @@ router.post("/forgot-password", async (req, res) => {
 router.get("/reset-password/:id/:token", async (req, res) => {
   const { id, token } = req.params;
   console.log(req.params);
-  // Your logic for handling reset password here
+  //  logic for handling reset password here
   const oldUser = await User.findOne({ _id: id });
   if (!oldUser) {
     return res.json({ status: "User Not Exists!!" });
