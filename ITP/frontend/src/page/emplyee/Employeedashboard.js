@@ -11,7 +11,7 @@ import "aos/dist/aos.css";
 import { Tag } from "antd";
 
 AOS.init({
-  duration: 1500, // Reduced duration for smoother animations
+  duration: 1500,  
 });
 
 function Employeedashboard() {
@@ -21,7 +21,7 @@ function Employeedashboard() {
   const [approveleaves, setapproveleaves] = useState([]);
   const [statusCounts, setStatusCounts] = useState({});
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("leaves"); // For dashboard tab navigation
+  const [activeTab, setActiveTab] = useState("leaves"); 
   const [recentLeaves, setRecentLeaves] = useState([]);
 
   useEffect(() => {
@@ -105,53 +105,51 @@ function Employeedashboard() {
     fetchData();
   }, []);
 
-  // Enhanced professional color palette with better contrast and visual appeal
+
   const ROLE_COLORS = {
-    employee: "#4338ca", // Deep indigo
-    courier: "#6d28d9", // Rich purple
-    user: "#be185d", // Deep pink
-    financial: "#c2410c", // Burnt orange
-    inventory: "#047857", // Deep emerald
-    machine: "#0e7490", // Deep cyan
-    admin: "#1e40af", // Royal blue
-    manager: "#b45309", // Amber
-    hr: "#9d174d", // Deep rose
-    it: "#4338ca", // Deep indigo
+    employee: "#4338ca", 
+    courier: "#6d28d9", 
+    user: "#be185d",
+    financial: "#c2410c", 
+    inventory: "#047857", 
+    machine: "#0e7490", 
+    admin: "#1e40af", 
+    manager: "#b45309", 
+    hr: "#9d174d", 
+    it: "#4338ca",
   };
 
-  // Refined hover colors with better contrast
   const ROLE_HOVER_COLORS = {
-    employee: "#4f46e5", // Brighter indigo
-    courier: "#7c3aed", // Brighter purple
-    user: "#db2777", // Brighter pink
-    financial: "#ea580c", // Brighter orange
-    inventory: "#059669", // Brighter emerald
-    machine: "#0891b2", // Brighter cyan
-    admin: "#2563eb", // Brighter blue
-    manager: "#d97706", // Brighter amber
-    hr: "#be185d", // Brighter rose
-    it: "#4f46e5", // Brighter indigo
+    employee: "#4f46e5", 
+    courier: "#7c3aed", 
+    user: "#db2777", 
+    financial: "#ea580c", 
+    inventory: "#059669", 
+    machine: "#0891b2", 
+    admin: "#2563eb", 
+    manager: "#d97706", 
+    hr: "#be185d", 
+    it: "#4f46e5",
   };
 
-  // Status colors
+ 
   const STATUS_COLORS = {
-    pending: "#eab308", // Yellow
-    approved: "#22c55e", // Green
-    disapproved: "#ef4444", // Red
+    pending: "#eab308", 
+    approved: "#22c55e", 
+    disapproved: "#ef4444",
   };
 
-  // Professional fallback colors with better contrast
   const FALLBACK_COLORS = [
-    "#4338ca", // Deep indigo
-    "#7e22ce", // Deep purple
-    "#be185d", // Deep pink
-    "#b91c1c", // Deep red
-    "#0369a1", // Deep blue
-    "#b45309", // Deep amber
-    "#15803d", // Deep green
-    "#0f766e", // Deep teal
-    "#6d28d9", // Deep violet
-    "#0e7490", // Deep cyan
+    "#4338ca", 
+    "#7e22ce", 
+    "#be185d", 
+    "#b91c1c", 
+    "#0369a1", 
+    "#b45309", 
+    "#15803d",
+    "#0f766e", 
+    "#6d28d9", 
+    "#0e7490", 
   ];
 
   // Generate a color for a role, using predefined if available, or from fallback array if not
