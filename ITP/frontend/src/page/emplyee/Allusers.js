@@ -192,7 +192,7 @@ function Allusers() {
 
   // Generate PDF report
   const generateReport = () => {
-    // Get current user or use fallback
+    
     const currentUser = window.currentUser || 
       JSON.parse(localStorage.getItem('currentUser') || 'null') || 
       { fullName: 'System User' };

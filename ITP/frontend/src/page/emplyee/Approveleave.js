@@ -32,16 +32,16 @@ function Approveleave() {
 
   // Enhanced UI Colors with Green Palette
   const UI_COLORS = {
-    PRIMARY: '#2ecc71',       // Vibrant Green
-    SECONDARY: '#27ae60',     // Dark Green
-    SUCCESS: '#27ae60',       // Success Green
-    ERROR: '#e74c3c',         // Soft Red
-    WARNING: '#f39c12',       // Amber
-    BACKGROUND: '#f0f5f0',    // Light Green-Tinted Background
-    TEXT: '#2c3e50',          // Dark Slate Gray
-    PENDING: '#f39c12',       // Amber for pending
-    APPROVED: '#27ae60',      // Green for approved
-    REJECTED: '#e74c3c'       // Red for rejected
+    PRIMARY: '#2ecc71',       
+    SECONDARY: '#27ae60',     
+    SUCCESS: '#27ae60',       
+    ERROR: '#e74c3c',       
+    WARNING: '#f39c12',       
+    BACKGROUND: '#f0f5f0',    
+    TEXT: '#2c3e50',          
+    PENDING: '#f39c12',       
+    APPROVED: '#27ae60',      
+    REJECTED: '#e74c3c'      
   };
 
   // Centralized API Error Handling
