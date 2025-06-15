@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Change Password</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const form = document.querySelector("form");
+      const passwordInput = document.getElementById("password");
+      const confirmPasswordInput = document.getElementById("confirm-password");
+      const errorMessage = document.createElement("p");
+      errorMessage.style.color = "#e74c3c";
+      errorMessage.className = "error-text";
+      
+      const feedbackArea = document.getElementById("password-feedback");
+      
+      // Password visibility toggle
+      const togglePassword = document.querySelectorAll(".toggle-password");
+      togglePassword.forEach(button => {
+        button.addEventListener("click", function() {
+          const input = this.previousElementSibling;
+          if (input.type === "password") {
+            input.type = "text";
+            this.innerHTML = '<i class="fas fa-eye-slash"></i>';
+          } else {
+            input.type = "password";
+            this.innerHTML = '<i class="fas fa-eye"></i>';
+          }
+        });
+      });
+      
+      // Password strength indicator
+      passwordInput.addEventListener("input", function() {
+        const password = passwordInput.value;
+        let strength = 0;
+        
+        if (password.length >= 6) strength += 1;
+        if (password.match(/[A-Z]/)) strength += 1;
+        if (password.match(/[0-9]/)) strength += 1;
+        if (password.match(/[^A-Za-z0-9]/)) strength += 1;
+        
+        const strengthBar = document.getElementById("password-strength");
+        strengthBar.style.width = (strength * 25) + "%";
+         
+        if (strength < 2) {
+          strengthBar.style.backgroundColor = "#e74c3c";
+          feedbackArea.textContent = "Weak password";
+          feedbackArea.style.color = "#e74c3c";
+        } else if (strength < 4) {
+          strengthBar.style.backgroundColor = "#f39c12";
+          feedbackArea.textContent = "Moderate password";
+          feedbackArea.style.color = "#f39c12";
+        } else {
+          strengthBar.style.backgroundColor = "#2ecc71";
+          feedbackArea.textContent = "Strong password";
+          feedbackArea.style.color = "#2ecc71";
+        }
+      });
+
+      confirmPasswordInput.addEventListener("input", function () {
+        if (passwordInput.value !== confirmPasswordInput.value) {
+          errorMessage.textContent = "Passwords do not match!";
+          if (!form.contains(errorMessage)) {
+            form.insertBefore(errorMessage, document.querySelector('.submit-btn'));
+          }
+          document.querySelector('input[type="submit"]').disabled = true;
+          document.querySelector('.match-indicator').innerHTML = '<i class="fas fa-times"></i>';
+          document.querySelector('.match-indicator').style.color = "#e74c3c";
+        } else {
+          if (form.contains(errorMessage)) {
+            form.removeChild(errorMessage);
+          }
+          document.querySelector('input[type="submit"]').disabled = false;
+          document.querySelector('.match-indicator').innerHTML = '<i class="fas fa-check"></i>';
+          document.querySelector('.match-indicator').style.color = "#2ecc71";
+        }
+      });
+  
+      form.addEventListener("submit", function (event) {
+        if (passwordInput.value !== confirmPasswordInput.value) {
+          event.preventDefault(); // Prevent form submission if passwords don't match
+          errorMessage.textContent = "Passwords do not match!";
+          form.insertBefore(errorMessage, document.querySelector('.submit-btn'));
+        }
+      });
+    });
+
+    var status = '<%- JSON.stringify(status) %>';
+
+    if (JSON.parse(status) == "verified") {
+      if (confirm("Do u want to login?")) {
+        window.location.href = "http://localhost:3000/login";
+      }
+    }
+  </script>
+  
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      background-color: #f7f9fc;
+      background-image: url('/api/placeholder/1920/1080');
+      background-size: cover;
+      background-position: center;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      padding: 40px 30px;
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #333;
+      font-weight: 600;
+      font-size: 24px;
+      overflow-wrap: break-word;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 25px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #555;
+    }
+
+    .password-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    input[type="password"] {
+      width: 100%;
+      padding: 15px;
+      padding-right: 45px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    input[type="password"]:focus {
+      border-color: #86eb34;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(134, 235, 52, 0.2);
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #666;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .password-strength-container {
+      height: 5px;
+      background-color: #e0e0e0;
+      border-radius: 5px;
+      margin-top: 10px;
+      overflow: hidden;
+    }
+
+    .password-strength {
+      height: 100%;
+      width: 0;
+      background-color: #e74c3c;
+      transition: all 0.3s ease;
+    }
+
+    .feedback-text {
+      font-size: 14px;
+      margin-top: 5px;
+      color: #666;
+    }
+
+    .match-indicator {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+      font-size: 16px;
+    }
+
+    .submit-btn {
+      background-color: #86eb34;
+      color: #333;
+      font-weight: 600;
+      font-size: 18px;
+      padding: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 15px;
+    }
+
+    .submit-btn:hover {
+      background-color: #70eb11;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(134, 235, 52, 0.3);
+    }
+
+    .submit-btn:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .error-text {
+      margin: 5px 0 15px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1><%= email %></h1>
+    <form action="" method="post">
+      <div class="input-group">
+        <label for="password">New Password</label>
+        <div class="password-container">
+          <input
+            type="password"
+            name="password"
+            id="password"
+            placeholder="Enter your new password"
+          />
+          <button type="button" class="toggle-password"><i class="fas fa-eye"></i></button>
+        </div>
+        <div class="password-strength-container">
+          <div class="password-strength" id="password-strength"></div>
+        </div>
+        <p class="feedback-text" id="password-feedback">Password strength</p>
+      </div>
+      
+      <div class="input-group">
+        <label for="confirm-password">Confirm Password</label>
+        <div class="password-container">
+          <input
+            type="password"
+            name="confirm-password"
+            id="confirm-password"
+            placeholder="Confirm your new password"
+          />
+          <button type="button" class="toggle-password"><i class="fas fa-eye"></i></button>
+          <span class="match-indicator"></span>
+        </div>
+      </div>
+      
+      <input type="submit" value="Change Password" class="submit-btn" />
+    </form>
+  </div>
+</body>
+</html>
